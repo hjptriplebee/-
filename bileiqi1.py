@@ -139,7 +139,7 @@ def bileiqi1(src, info):
     # 进行数字分割
     _, src_num_open = cv.threshold(src_num, 50, 255, cv.THRESH_BINARY)
     src_num_open = cv.resize(src_num_open, (0, 0), fx=1, fy=0.8)
-    model = load_model('my_model.h5')
+    model = load_model('num_model.h5')
     Num = ''
     for i in range(2):
         number = src_num_open[:, i * src_num_open.shape[1] // 2:(i + 1) * src_num_open.shape[1] // 2]

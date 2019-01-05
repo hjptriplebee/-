@@ -2,7 +2,7 @@
       "distance": 10.0,
       "horizontal": 10.0,
       "vertical": 20.0,
-      "name": "absorb",
+      "name": "absorb3_1",
       "type": "absorb",
       "ROI": {
           "x": 800,

@@ -2,18 +2,19 @@
       "distance": 10.0,
       "horizontal": 10.0,
       "vertical": 20.0,
-      "name": "switch",
+      "name": "switch1_1",
       "type": "switch",
       "ROI": {
-          "x": 236,
-          "y": 77,
-          "w": 250,
-          "h": 250
+          "x": 750,
+          "y": 450,
+          "w": 300,
+          "h": 300
       },
       "switchThreshold":0.6,
       "redRangeAbove":10,
       "greenRangeAbove":77,
       "redNumThreshold":5,
       "greenNumThreshold":5
+
 
 }

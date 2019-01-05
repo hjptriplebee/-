@@ -93,7 +93,7 @@ def startClient(results):
         results.append(True)
 
     # ===========================absorb test===========================
-    image = open("image/absorb_1.jpg", "rb")
+    image = open("image/absorb1_1.jpg", "rb")
     imageByte = base64.b64encode(image.read())
     data = json.dumps({
         "image": imageByte.decode("ascii"),
@@ -109,7 +109,7 @@ def startClient(results):
         results.append(True)
 
     # ===========================switch test===========================
-    image = open("image/switch_1.jpg", "rb")
+    image = open("image/switch1.jpg", "rb")
     imageByte = base64.b64encode(image.read())
     data = json.dumps({
         "image": imageByte.decode("ascii"),
@@ -153,10 +153,10 @@ def codecov():
     image = cv2.imread("image/pressure_1.jpg")
     receive2 = meterReader(image, ["pressure_1"])
 
-    image = cv2.imread("image/absorb_1.jpg")
+    image = cv2.imread("image/absorb1_1.jpg")
     receive2 = meterReader(image, ["absorb_1"])
 
-    image = cv2.imread("image/switch_1.jpg")
+    image = cv2.imread("image/switch1.jpg")
     receive2 = meterReader(image, ["switch_1"])
 
     image = cv2.imread("image/blenometer_1.jpg")

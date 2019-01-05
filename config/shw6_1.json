@@ -1,0 +1,41 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "shw6_1",
+      "type": "doubleArrester",
+      "ROI": {
+          "x": 730,
+          "y":1200,
+          "w": 1880,
+          "h": 1650
+      },
+      "startPoint": {
+          "x": 465,
+          "y": 811
+      },
+      "endPoint": {
+          "x": 857,
+          "y": 691
+      },
+      "centerPoint": {
+          "x": 569,
+          "y": 1121
+      },
+      "startValue": 0.0,
+      "totalValue": 0.9,
+      "startPointUp": {
+          "x": 455,
+          "y": 213
+      },
+      "endPointUp": {
+          "x": 455,
+          "y": 213
+      },
+      "centerPointUp": {
+          "x": 515,
+          "y": 389
+      },
+      "startValueUp": 0.0,
+      "totalValueUp": 10.0
+  }

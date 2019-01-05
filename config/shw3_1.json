@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "shw3_1",
+      "type": "countArrester",
+      "ROI": {
+          "x": 1500,
+          "y":1100,
+          "w": 1000,
+          "h": 1000
+      },
+      "startPoint": {
+          "x": 183,
+          "y": 58
+      },
+      "endPoint": {
+          "x": 183,
+          "y": 58
+      },
+      "centerPoint": {
+          "x": 179,
+          "y": 168
+      },
+      "startValue": 0.0,
+      "totalValue": 10.0
+  }

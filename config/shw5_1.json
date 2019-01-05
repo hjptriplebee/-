@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "shw5_1",
+      "type": "countArrester",
+      "ROI": {
+          "x": 1000,
+          "y":1800,
+          "w": 1700,
+          "h": 1400
+      },
+      "startPoint": {
+          "x": 421,
+          "y": 169
+      },
+      "endPoint": {
+          "x": 421,
+          "y": 169
+      },
+      "centerPoint": {
+          "x": 509,
+          "y": 473
+      },
+      "startValue": 0.0,
+      "totalValue": 10.0
+  }

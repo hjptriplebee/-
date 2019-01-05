@@ -71,7 +71,7 @@ def digitArrester(src, info):
             pt = cv.boxPoints(minrect)  # 矩形四个点
             points.append(pt)
     # 获得变换角度
-    angle = minrect[0][2]
+    angle = minrectlist[0][2]
     # 获得变换矩阵
     change = cv.getRotationMatrix2D(minrect[0], angle, 1)
     src_correct = cv.warpAffine(src, change, (src.shape[1], src.shape[0]))

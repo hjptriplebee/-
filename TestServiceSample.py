@@ -14,7 +14,7 @@ def startClient(results):
     # test reader interface
 
     # ===========================bileiqi1 test===========================
-    image = open("image/bileiqi1_1.jpg", "rb")
+    image = open("image/bileiqi1.jpg", "rb")
     imageByte = base64.b64encode(image.read())
     data = json.dumps({
         "image": imageByte.decode("ascii"),
@@ -141,7 +141,7 @@ def startClient(results):
         results.append(True)
 
 def codecov():
-    image = cv2.imread("image/bileiqi1_1.jpg")
+    image = cv2.imread("image/bileiqi1.jpg")
     receive2 = meterReader(image, ["bileiqi1_1"])
 
     image = cv2.imread("image/SF6_1.jpg")

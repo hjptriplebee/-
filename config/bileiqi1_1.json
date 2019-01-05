@@ -3,7 +3,7 @@
       "horizontal": 10.0,
       "vertical": 20.0,
       "name": "bileiqi1_1",
-      "type": "bileiqi1",
+      "type": "digitArrester",
       "ROI": {
           "x": 300,
           "y": 50,

@@ -12,4 +12,3 @@ def showLabel(image, info):
     cv2.circle(meter, (center[0], center[1]), 5, (0, 0, 255), -1)
     cv2.imshow("your label", meter)
     cv2.waitKey(0)
-

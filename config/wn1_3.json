@@ -1,0 +1,41 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "wn1_3",
+      "type": "doubleArrester",
+      "ROI": {
+          "x": 1206,
+          "y":543,
+          "w": 639,
+          "h": 604
+      },
+      "startPoint": {
+          "x": 203,
+          "y": 393
+      },
+      "endPoint": {
+          "x": 436,
+          "y": 357
+      },
+      "centerPoint": {
+          "x": 328,
+          "y": 482
+      },
+      "startValue": 0.0,
+      "totalValue": 0.9,
+      "startPointUp": {
+          "x": 253,
+          "y": 116
+      },
+      "endPointUp": {
+          "x": 253,
+          "y": 116
+      },
+      "centerPointUp": {
+          "x": 265,
+          "y": 190
+      },
+      "startValueUp": 0.0,
+      "totalValueUp": 10.0
+  }

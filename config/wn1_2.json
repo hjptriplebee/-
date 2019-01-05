@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "wn1_2",
+      "type": "normalPressure",
+      "ROI": {
+          "x": 622,
+          "y":579,
+          "w": 249,
+          "h": 273
+      },
+      "startPoint": {
+          "x": 119,
+          "y": 221
+      },
+      "endPoint": {
+          "x": 118,
+          "y": 55
+      },
+      "centerPoint": {
+          "x": 188,
+          "y": 141
+      },
+      "startValue": 0.0,
+      "totalValue": 200.0
+  }

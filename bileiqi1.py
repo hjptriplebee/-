@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import cv2 as cv
-# from keras.models import load_model
+from keras.models import load_model
 from Common import *
 
 
@@ -30,7 +30,7 @@ def line_detect(gray, low_thres=40, high_thres=110):
     """
     edges = cv.Canny(gray, low_thres, high_thres, apertureSize=3)
     linepoint = []
-    lines = cv.HoughLinesP(edges, 1, np.pi / 180, 30, minLineLength=25, maxLineGap=2)
+    lines = cv.HoughLinesP(edges, 1, np.pi / 180, 30, minLineLength=15, maxLineGap=2)
     try:
         for line in lines:
             linepoint.append(line[0])
@@ -59,16 +59,18 @@ def bileiqi1(src, info):
     src_close = cv.morphologyEx(src_bin, cv.MORPH_CLOSE, kernel)
     image, contours, h = cv.findContours(src_close, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-    minrect = []
-
+    minrectlist = []
+    points=[]
     for i in range(len(contours)):
         rect = cv.minAreaRect(contours[i])
         if (rect[1][0] > (src.shape[1] * 0.5) and rect[1][1] > (src.shape[0] * 0.3) and rect[1][0] < (
                 src.shape[1] * 0.8) and rect[1][1] < (src.shape[0] * 0.5)):
             minrect = cv.minAreaRect(contours[i])
-            points = cv.boxPoints(minrect)  # 矩形四个点
+            minrectlist.append(minrect)
+            pt = cv.boxPoints(minrect)  # 矩形四个点
+            points.append(pt)
     # 获得变换角度
-    angle = minrect[2]
+    angle = minrect[0][2]
     # 获得变换矩阵
     change = cv.getRotationMatrix2D(minrect[0], angle, 1)
     src_correct = cv.warpAffine(src, change, (src.shape[1], src.shape[0]))
@@ -81,7 +83,7 @@ def bileiqi1(src, info):
     # 根据变换矩阵得到新的四个点
     newpoints = []
     for i in range(4):
-        point = newchange.dot(np.array([points[i][0], points[i][1], 1]))
+        point = newchange.dot(np.array([points[0][i][0], points[0][i][1], 1]))
         point = list(point)
         point.pop()
         newpoints.append(point)
@@ -117,19 +119,21 @@ def bileiqi1(src, info):
     src_gray = cv.equalizeHist(src_gray)
     thres, src_bin = cv.threshold(src_gray, 100, 255, cv.THRESH_BINARY)
     image, contours, h = cv.findContours(src_bin, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    points=[]
     for i in range(len(contours)):
         rect = cv.minAreaRect(contours[i])
         if (rect[1][0] > (src.shape[1] * 0.2) and rect[1][1] > (src.shape[0] * 0.2) and rect[1][0] < (
-                src.shape[1] * 0.3) and
+                src.shape[1] * 0.4) and
                 rect[1][1] < (src.shape[0] * 0.4)):
             minrect = cv.minAreaRect(contours[i])
-            points = cv.boxPoints(minrect)  # 矩形四个点
+            pt = cv.boxPoints(minrect)  # 矩形四个点
+            points.append(pt)
     array = np.array([[0, 0, 1]])
     newchange = np.vstack((change, array))
     # 根据变换矩阵得到新的四个点
     newpoints = []
     for i in range(4):
-        point = newchange.dot(np.array([points[i][0], points[i][1], 1]))
+        point = newchange.dot(np.array([points[0][i][0], points[0][i][1], 1]))
         point = list(point)
         point.pop()
         newpoints.append(point)
@@ -139,7 +143,7 @@ def bileiqi1(src, info):
     # 进行数字分割
     _, src_num_open = cv.threshold(src_num, 50, 255, cv.THRESH_BINARY)
     src_num_open = cv.resize(src_num_open, (0, 0), fx=1, fy=0.8)
-    model = load_model('my_model.h5')
+    model = load_model('num_detection.h5')
     Num = ''
     for i in range(2):
         number = src_num_open[:, i * src_num_open.shape[1] // 2:(i + 1) * src_num_open.shape[1] // 2]

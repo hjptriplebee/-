@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "wn4_1",
+      "type": "digitPressure",
+      "ROI": {
+          "x": 1112,
+          "y": 1888,
+          "w": 1368,
+          "h": 1344
+      },
+      "startPoint": {
+          "x": 0,
+          "y": 0
+      },
+      "endPoint": {
+          "x": 0,
+          "y": 0
+      },
+      "centerPoint": {
+          "x": 0,
+          "y": 0
+      },
+      "startValue": 0.0,
+      "totalValue": 0.0
+  }

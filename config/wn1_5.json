@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "wn1_5",
+      "type": "digitPressure",
+      "ROI": {
+          "x": 973,
+          "y":930,
+          "w": 160,
+          "h": 188
+      },
+      "startPoint": {
+          "x": 60,
+          "y": 129
+      },
+      "endPoint": {
+          "x": 121,
+          "y": 121
+      },
+      "centerPoint": {
+          "x": 81,
+          "y": 91
+      },
+      "startValue": 0.0,
+      "totalValue": 16.0
+  }

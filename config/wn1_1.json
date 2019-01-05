@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "wn1_1",
+      "type": "countArrester",
+      "ROI": {
+          "x": 780,
+          "y":303,
+          "w": 259,
+          "h": 266
+      },
+      "startPoint": {
+          "x": 81,
+          "y": 60
+      },
+      "endPoint": {
+          "x": 81,
+          "y": 60
+      },
+      "centerPoint": {
+          "x": 127,
+          "y": 136
+      },
+      "startValue": 0.0,
+      "totalValue": 10.0
+  }

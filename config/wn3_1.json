@@ -1,0 +1,27 @@
+{
+      "distance": 10.0,
+      "horizontal": 10.0,
+      "vertical": 20.0,
+      "name": "wn3_1",
+      "type": "normalPressure",
+      "ROI": {
+          "x": 304,
+          "y": 418,
+          "w": 404,
+          "h": 408
+      },
+      "startPoint": {
+          "x": 80,
+          "y": 175
+      },
+      "endPoint": {
+          "x": 315,
+          "y": 189
+      },
+      "centerPoint": {
+          "x": 181,
+          "y": 296
+      },
+      "startValue": 0.0,
+      "totalValue": 200.0
+  }

@@ -1,0 +1,38 @@
+{
+    "name": "17-1",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 242,
+        "y": 118,
+        "w": 1246,
+        "h": 856
+    },
+    "startPoint": {
+        "x": 59,
+        "y": 68
+    },
+    "endPoint": {
+        "x": 275,
+        "y": 214
+    },
+    "centerPoint": {
+        "x": 272,
+        "y": 59
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "KWH",
+    "result": 0.0
+}

@@ -14,11 +14,11 @@ def getMatInt(Mat):
     Mat = Mat.astype(np.uint8)
     return Mat
 def gamma(image,thre):
-    '''
+    """
     :param image: numpy type
-           thre:float
+    :param thre:float
     :return: image numpy
-    '''
+    """
     f = image / 255.0
     # we can change thre accoding  to real condition
     # thre = 0.3
@@ -27,11 +27,11 @@ def gamma(image,thre):
     return out
 
 def backGamma(image,thre):
-    '''
+    """
     :param image: numpy type
-           thre:float
+    :param thre:float
     :return: image numpy
-    '''
+    """
     f = image / 255.0
     # thre = 0.2 is best for red
     out = np.power(f, thre)
@@ -60,11 +60,11 @@ def GetHsvProperty(h,s,v):
     return h_ave,s_ave,v_ave,h_var,s_var,v_var
 
 def getBlock(image,size=30):
-    '''
-     :param img: 300*300
+    """
+    :param image: 300*300
     :param size:
     :return:
-    '''
+    """
     #the block is 30*30
     # print(image)
     h,w ,_= image.shape
@@ -98,7 +98,7 @@ def countTarPer(h_vec,thre,which):
     elif which =="green":
         for d in h_vec:
             N=N+1
-            if d>green_range_below and d<thre:
+            if green_range_below < d < thre:
                 n=n+1
 
     return n,float(n/N)
@@ -110,7 +110,7 @@ def getCircle(img):
 
     gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
 
-    canny = cv2.Canny(img, 40, 80)
+    # canny = cv2.Canny(img, 40, 80)
 
     circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 50, param1=80, param2=30, minRadius=10, maxRadius=40)
     cp_img = None
@@ -122,7 +122,7 @@ def getCircle(img):
         x = int(circle[0])
         y = int(circle[1])
 
-        r = int(circle[2])
+        # r = int(circle[2])
         # print("r========" + str(r))
 
         # img = cv2.circle(img, (x, y), r, (0, 0, 255), 1, 8, 0)

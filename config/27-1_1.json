@@ -1,0 +1,38 @@
+{
+    "name": "27-1",
+    "type": "videoDigit",
+    "ROI": {
+        "x": 26,
+        "y": 24,
+        "w": 1866,
+        "h": 1036
+    },
+    "startPoint": {
+        "x": 69,
+        "y": 119
+    },
+    "endPoint": {
+        "x": 394,
+        "y": 295
+    },
+    "centerPoint": {
+        "x": 385,
+        "y": 86
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "VIDEO",
+    "result": 0.0
+}

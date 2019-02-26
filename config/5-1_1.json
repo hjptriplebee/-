@@ -1,0 +1,38 @@
+{
+    "name": "5-1",
+    "type": "videoDigit",
+    "ROI": {
+        "x": 12,
+        "y": 14,
+        "w": 1888,
+        "h": 1048
+    },
+    "startPoint": {
+        "x": 52,
+        "y": 72
+    },
+    "endPoint": {
+        "x": 299,
+        "y": 211
+    },
+    "centerPoint": {
+        "x": 296,
+        "y": 53
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "VIDEO",
+    "result": 0.0
+}

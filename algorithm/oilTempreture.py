@@ -1,8 +1,8 @@
 from algorithm.Common import *
 from algorithm.debug import *
 
-red_range = [ np.array([156, 120, 80]), np.array([179, 240, 220])]
-white_range = [ np.array([0, 0, 200]), np.array([180, 30, 255])]
+red_range = [np.array([156, 120, 80]), np.array([179, 240, 220])]
+white_range = [np.array([0, 0, 200]), np.array([180, 30, 255])]
 
 
 def color_detection(image, color):
@@ -68,7 +68,7 @@ def oilTempreture(image, info):
     end = np.array([info["endPoint"]["x"], info["endPoint"]["y"]])
     center = np.array([info["centerPoint"]["x"], info["centerPoint"]["y"]])
 
-    meter = meterFinderByTemplate(image, info["template"])
+    meter = meterFinderBySIFT(image, info["template"])
     h, w, _ = meter.shape
 
     fixHeight = 300

@@ -41,45 +41,60 @@ def getMeterIDs(imageID):
 
 @app.route('/', methods=['POST'])
 def meterReaderAPI():
-    data = request.get_data().decode("utf-8")
-    data = json.loads(data)
-    imageID = data["imageID"]
+    try:
+        data = request.get_data().decode("utf-8")
+        data = json.loads(data)
+        imageID = data["imageID"]
 
-    meterIDs = getMeterIDs(imageID)
+        meterIDs = getMeterIDs(imageID)
 
-    imageByte = data["image"].encode("ascii")
-    imageByte = base64.b64decode(imageByte)
-    imageArray = np.asarray(bytearray(imageByte), dtype="uint8")
-    image = cv2.imdecode(imageArray, cv2.IMREAD_COLOR)
+        # imageByte = data["image"].encode("ascii")
+        # imageByte = base64.b64decode(imageByte)
+        # imageArray = np.asarray(bytearray(imageByte), dtype="uint8")
+        # image = cv2.imdecode(imageArray, cv2.IMREAD_COLOR)
 
-    result = meterReader(image, meterIDs)
-    sendData = json.dumps(result).encode("utf-8")
+        path = data["path"]
+        recognitionData = None
 
-    return sendData
+        if path[-4:] != ".jpg":
+            recognitionData = cv2.VideoCapture(path)
+        else:
+            recognitionData = cv2.imread(path)
+        # print(path, np.shape(recognitionData))
+    except:
+        return json.dumps({"error":"json format error!"})
+    else:
+        result = meterReader(recognitionData, meterIDs)
+        sendData = json.dumps(result).encode("utf-8")
+
+        return sendData
 
 
 @app.route('/store', methods=['POST'])
 def storeAPI():
-    data = request.get_data().decode("utf-8")
-    data = json.loads(data)
+    try:
+        data = request.get_data().decode("utf-8")
+        data = json.loads(data)
 
-    imageID = data["imageID"]
-    meterNum = getMeterNum(imageID)
-    meterID = imageID + "_" + str(meterNum + 1)
-    imageByte = data["template"].encode("ascii")
-    imageByte = base64.b64decode(imageByte)
-    imageArray = np.asarray(bytearray(imageByte), dtype="uint8")
-    image = cv2.imdecode(imageArray, cv2.IMREAD_COLOR)
-    cv2.imwrite("template/" + meterID + ".jpg", image)
+        imageID = data["imageID"]
+        meterNum = getMeterNum(imageID)
+        meterID = imageID + "_" + str(meterNum + 1)
+        imageByte = data["template"].encode("ascii")
+        imageByte = base64.b64decode(imageByte)
+        imageArray = np.asarray(bytearray(imageByte), dtype="uint8")
+        image = cv2.imdecode(imageArray, cv2.IMREAD_COLOR)
+        cv2.imwrite("template/" + meterID + ".jpg", image)
 
-    config = data["config"]
-    print(config)
+        config = data["config"]
+        # print(config)
+    except:
+        return json.dumps({"error": "json format error!"})
+    else:
+        file = open("config/" + meterID + ".json", "w")
+        file.write(json.dumps(config))
+        file.close()
 
-    file = open("config/" + meterID + ".json", "w")
-    file.write(json.dumps(config))
-    file.close()
-
-    return "received!"
+        return "received!"
 
 
 if __name__ == '__main__':

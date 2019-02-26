@@ -35,6 +35,7 @@ def meterFinderByTemplate(image, template):
 
     return image[topLeft[1]:bottomRight[1], topLeft[0]:bottomRight[0]]
 
+
 def meterLocationFinderBySIFT(image, template):
     """
     locate meter's bbox
@@ -73,7 +74,6 @@ def meterLocationFinderBySIFT(image, template):
     imagePointDistanceMatrix = pairwise_distances(imagePointMatrix, metric="euclidean")
 
     # del bad match
-    good2 = []
     distances = []
     maxAbnormalNum = 15
     for i in range(len(good)):
@@ -104,16 +104,140 @@ def meterLocationFinderBySIFT(image, template):
     return minX, minY, maxX, maxY
 
 
-def meterFinderBySIFT(image, template):
+def meterFinderBySIFT(image, info):
     """
     locate meter's bbox
     :param image: image
-    :param template: template
+    :param info: info
     :return: bbox image
     """
-    minX, minY, maxX, maxY = meterLocationFinderBySIFT(image, template)
+    template = info["template"]
+    startPoint = (info["startPoint"]["x"], info["startPoint"]["y"])
+    centerPoint = (info["centerPoint"]["x"], info["centerPoint"]["y"])
+    endPoint = (info["endPoint"]["x"], info["endPoint"]["y"])
+    # startPointUp = (info["startPointUp"]["x"], info["startPointUp"]["y"])
+    # endPointUp = (info["endPointUp"]["x"], info["endPointUp"]["y"])
+    # centerPointUp = (info["centerPointUp"]["x"], info["centerPointUp"]["y"])
 
-    return image[minY:maxY, minX:maxX]
+    templateBlurred = cv2.GaussianBlur(template, (3, 3), 0)
+    imageBlurred = cv2.GaussianBlur(image, (3, 3), 0)
+
+    sift = cv2.xfeatures2d.SIFT_create()
+
+    # shape of descriptor n * 128, n is the num of key points.
+    # a row of descriptor is the feature of related key point.
+    templateKeyPoint, templateDescriptor = sift.detectAndCompute(templateBlurred, None)
+    imageKeyPoint, imageDescriptor = sift.detectAndCompute(imageBlurred, None)
+
+    # for debug
+    # templateBlurred = cv2.drawKeypoints(templateBlurred, templateKeyPoint, templateBlurred)
+    # imageBlurred = cv2.drawKeypoints(imageBlurred, imageKeyPoint, imageBlurred)
+    # cv2.imshow("template", templateBlurred)
+    # cv2.imshow("image", imageBlurred)
+
+    # match
+    bf = cv2.BFMatcher()
+    # k = 2, so each match has 2 points. 2 points are sorted by distance.
+    matches = bf.knnMatch(templateDescriptor, imageDescriptor, k=2)
+
+    # The first one is better than the second one
+    good = [[m] for m, n in matches if m.distance < 0.8 * n.distance]
+
+    # distance matrix
+    templatePointMatrix = np.array([list(templateKeyPoint[p[0].queryIdx].pt) for p in good])
+    imagePointMatrix = np.array([list(imageKeyPoint[p[0].trainIdx].pt) for p in good])
+    templatePointDistanceMatrix = pairwise_distances(templatePointMatrix, metric="euclidean")
+    imagePointDistanceMatrix = pairwise_distances(imagePointMatrix, metric="euclidean")
+
+    # del bad match
+    distances = []
+    maxAbnormalNum = 15
+    for i in range(len(good)):
+        diff = abs(templatePointDistanceMatrix[i] - imagePointDistanceMatrix[i])
+        # distance between distance features
+        diff.sort()
+        distances.append(np.sqrt(np.sum(np.square(diff[:-maxAbnormalNum]))))
+
+    averageDistance = np.average(distances)
+    good2 = [good[i] for i in range(len(good)) if distances[i] < 2 * averageDistance]
+
+    # for debug
+    # matchImage = cv2.drawMatchesKnn(template, templateKeyPoint, image, imageKeyPoint, good2, None, flags=2)
+    # cv2.imshow("matchImage", matchImage)
+    # cv2.waitKey(0)
+
+    # not match
+    if len(good2) < 3:
+        return template
+
+    # 寻找转换矩阵 M
+    src_pts = np.float32([templateKeyPoint[m[0].queryIdx].pt for m in good2]).reshape(-1, 1, 2)
+    dst_pts = np.float32([imageKeyPoint[m[0].trainIdx].pt for m in good2]).reshape(-1, 1, 2)
+    M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+    matchesMask = mask.ravel().tolist()
+    h, w, _ = template.shape
+    # 找出匹配到的图形的四个点和标定信息里的所有点
+    pts = np.float32(
+        [[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0], [startPoint[0], startPoint[1]], [endPoint[0], endPoint[1]],
+         [centerPoint[0], centerPoint[1]],
+         # [startPointUp[0], startPointUp[1]],
+         # [endPointUp[0], endPointUp[1]],
+         # [centerPointUp[0], centerPointUp[1]]
+         ]).reshape(-1, 1, 2)
+    dst = cv2.perspectiveTransform(pts, M)
+
+    # 校正图像
+    angle = 0.0
+    vector = (dst[3][0][0] - dst[0][0][0], dst[3][0][1] - dst[0][0][1])
+    cos = (vector[0] * (200.0)) / (200.0 * math.sqrt(vector[0] ** 2 + vector[1] ** 2))
+    if (vector[1] > 0):
+        angle = math.acos(cos) * 180.0 / math.pi
+    else:
+        angle = -math.acos(cos) * 180.0 / math.pi
+    # print(angle)
+
+    change = cv2.getRotationMatrix2D((dst[0][0][0], dst[0][0][1]), angle, 1)
+    src_correct = cv2.warpAffine(image, change, (image.shape[1], image.shape[0]))
+    array = np.array([[0, 0, 1]])
+    newchange = np.vstack((change, array))
+    # 获得校正后的所需要的点
+    newpoints = []
+    for i in range(len(pts)):
+        point = newchange.dot(np.array([dst[i][0][0], dst[i][0][1], 1]))
+        point = list(point)
+        point.pop()
+        newpoints.append(point)
+    src_correct = src_correct[int(round(newpoints[0][1])):int(round(newpoints[1][1])),
+                  int(round(newpoints[0][0])):int(round(newpoints[3][0]))]
+
+    width = src_correct.shape[1]
+    height = src_correct.shape[0]
+    if width == 0 or height == 0:
+        return template
+
+    startPoint = (int(round(newpoints[4][0]) - newpoints[0][0]), int(round(newpoints[4][1]) - newpoints[0][1]))
+    endPoint = (int(round(newpoints[5][0]) - newpoints[0][0]), int(round(newpoints[5][1]) - newpoints[0][1]))
+    centerPoint = (int(round(newpoints[6][0]) - newpoints[0][0]), int(round(newpoints[6][1]) - newpoints[0][1]))
+
+    def isOverflow(point, width, height):
+        if point[0] < 0 or point[1] < 0 or point[0] > height - 1 or point[1] > width - 1:
+            return True
+        return False
+
+    if isOverflow(startPoint, width, height) or isOverflow(endPoint, width, height) or isOverflow(centerPoint, width, height):
+        return template
+
+    # startPointUp = (int(round(newpoints[7][0]) - newpoints[0][0]), int(round(newpoints[7][1]) - newpoints[0][1]))
+    # endPointUp = (int(round(newpoints[8][0]) - newpoints[0][0]), int(round(newpoints[8][1]) - newpoints[0][1]))
+    # centerPointUp = (int(round(newpoints[9][0]) - newpoints[0][0]), int(round(newpoints[9][1]) - newpoints[0][1]))
+    info["startPoint"]["x"] = startPoint[0]
+    info["startPoint"]["y"] = startPoint[1]
+    info["centerPoint"]["x"] = centerPoint[0]
+    info["centerPoint"]["y"] = centerPoint[1]
+    info["endPoint"]["x"] = endPoint[0]
+    info["endPoint"]["y"] = endPoint[1]
+
+    return src_correct
 
 
 class AngleFactory:
@@ -160,13 +284,15 @@ class AngleFactory:
         :param endPoint: end point
         :param centerPoint: center point
         :param pointerPoint: pointer's outer point
+        :param startValue: start value
+        :param totalValue: total value
         :return: value
         """
         angleRange = cls.calAngleClockwise(startPoint, endPoint, centerPoint)
         angle = cls.calAngleClockwise(startPoint, pointerPoint, centerPoint)
         value = angle / angleRange * totalValue + startValue
         if value > totalValue or value < startValue:
-            return startValue if abs(value-startValue) < abs(value-totalValue) else totalValue
+            return startValue if angle > np.pi + angleRange / 2 else totalValue
         return value
 
     @classmethod
@@ -178,6 +304,8 @@ class AngleFactory:
         :param endPoint: end point
         :param centerPoint: center point
         :param PointerVector: pointer's vector
+        :param startValue: start value
+        :param totalValue: total value
         :return: value
         """
         angleRange = cls.calAngleClockwise(startPoint, endPoint, centerPoint)
@@ -193,34 +321,7 @@ class AngleFactory:
 
         value = angle / angleRange * totalValue + startValue
         if value > totalValue or value < startValue:
-            return startValue if abs(value-startValue) < abs(value-totalValue) else totalValue
-        return value
-
-    @classmethod
-    def calPointerValueByPoint(cls, startPoint, endPoint, centerPoint, point, startValue, totalValue):
-        """
-        由三个点返回仪表值,区分@calPointerValueByPointerVector
-        :param startPoint: 起点
-        :param endPoint: 终点
-        :param centerPoint:
-        :param point:
-        :param startValue:
-        :param totalValue:
-        :return:
-        """
-        angleRange = cls.calAngleClockwise(startPoint, endPoint, centerPoint)
-
-        vectorA = startPoint - centerPoint
-        vectorB = point - centerPoint
-
-        angle = cls.__calAngleBetweenTwoVector(vectorA, vectorB)
-
-        if np.cross(vectorA, vectorB) < 0:
-            angle = 2 * np.pi - angle
-
-        value = angle / angleRange * totalValue + startValue
-        if value > totalValue or value < startValue:
-            return startValue if abs(value-startValue) < abs(value-totalValue) else totalValue
+            return startValue if angle > np.pi + angleRange / 2 else totalValue
         return value
 
     def findPointerFromHSVSpace(src, center, radius, radians_low, radians_high, patch_degree=1.0, ptr_resolution=5,
@@ -243,18 +344,20 @@ class AngleFactory:
     pass
 
 
-def scanPointer(meter, pts, startVal, endVal):
-    '''
+def scanPointer(meter, info):
+    """
     find pointer of meter
     :param meter: meter matched template
     :param pts: a list including three numpy array, eg: [startPointer, endPointer, centerPointer]
     :param startVal: an integer of meter start value
     :param endVal: an integer of meter ending value
     :return: pointer reading number
-    '''
-    start = pts[0].astype(np.int32)
-    end = pts[1].astype(np.int32)
-    center = pts[2].astype(np.int32)
+    """
+    center = np.array([info["centerPoint"]["x"], info["centerPoint"]["y"]])
+    start = np.array([info["startPoint"]["x"], info["startPoint"]["y"]])
+    end = np.array([info["endPoint"]["x"], info["endPoint"]["y"]])
+    startVal = info["startValue"]
+    endVal = info["totalValue"]
     if meter.shape[0] > 500:
         fixHeight = 300
         fixWidth = int(meter.shape[1] / meter.shape[0] * fixHeight)
@@ -268,14 +371,15 @@ def scanPointer(meter, pts, startVal, endVal):
     radious = int(EuclideanDistance(start, center))
 
     src = cv2.GaussianBlur(meter, (3, 3), sigmaX=0, sigmaY=0, borderType=cv2.BORDER_DEFAULT)
+
     gray = cv2.cvtColor(src=src, code=cv2.COLOR_RGB2GRAY)
-    thresh = gray.copy()
-    cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY_INV, thresh)
+
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 17, 11)
 
     mask = np.zeros((src.shape[0], src.shape[1]), np.uint8)
     cv2.circle(mask, (center[0], center[1]), radious, (255, 255, 255), -1)
     thresh = cv2.bitwise_and(thresh, mask)
-    cv2.circle(thresh, (center[0], center[1]), int(radious / 2), (0, 0, 0), -1)
+    cv2.circle(thresh, (center[0], center[1]), int(radious / 3), (0, 0, 0), -1)
 
     thresh = cv2.erode(thresh, np.ones((3, 3), np.uint8), 3)
     thresh = cv2.dilate(thresh, np.ones((5, 5), np.uint8))
@@ -287,11 +391,12 @@ def scanPointer(meter, pts, startVal, endVal):
                                        endPoint=start) * 180 / np.pi)
     endAngle = int(AngleFactory.calAngleClockwise(startPoint=np.array([center[0] + 100, center[1]]), centerPoint=center,
                                                   endPoint=end) * 180 / np.pi)
+    # print(startAngle, endAngle)
     if endAngle <= startAngle:
         endAngle += 360
     maxSum = 0
     outerPoint = start
-    for angle in range(startAngle, endAngle):
+    for angle in range(startAngle - 10, endAngle + 10):
         pts, outPt = getPoints(center, radious, angle)
         thisSum = 0
         showImg = cv2.cvtColor(thresh.copy(), cv2.COLOR_GRAY2BGR)
@@ -300,6 +405,7 @@ def scanPointer(meter, pts, startVal, endVal):
             cv2.circle(showImg, (pt[0], pt[1]), 2, (0, 0, 255), -1)
             if thresh[pt[1], pt[0]] != 0:
                 thisSum += 1
+
         # cv2.circle(showImg, (outPt[0], outPt[1]), 2, (255, 0, 0), -1)
         # cv2.imshow("img", showImg)
         # cv2.waitKey(1)
@@ -317,10 +423,21 @@ def scanPointer(meter, pts, startVal, endVal):
             end[1] -= 3
         degree = AngleFactory.calPointerValueByOuterPoint(start, end, center, outerPoint, startVal, endVal)
 
+    # small value to zero
+    if degree < 0.05 * endVal:
+        degree = startVal
+
     if ifShow:
-        print(degree, start, center, outerPoint)
+        # print(degree, start, center, outerPoint)
         cv2.circle(meter, (outerPoint[0], outerPoint[1]), 10, (0, 0, 255), -1)
         cv2.line(meter, (center[0], center[1]), (outerPoint[0], outerPoint[1]), (0, 0, 255), 5)
+        cv2.line(meter, (center[0], center[1]), (start[0], start[1]), (255, 0, 0), 3)
+        cv2.line(meter, (center[0], center[1]), (end[0], end[1]), (255, 0, 0), 3)
+
+        thresh = np.expand_dims(thresh, axis=2)
+        thresh = np.concatenate((thresh, thresh, thresh), 2)
+        meter = np.hstack((meter, thresh))
+
         cv2.imshow("test", meter)
         cv2.waitKey(0)
     return degree
@@ -335,15 +452,19 @@ def getPoints(center, radious, angle):
     farthestPointX = int(center[0] + radious * np.cos(angle / 180 * np.pi))
     farthestPointY = int(center[1] + radious * np.sin(angle / 180 * np.pi))
 
-    delta_y = farthestPointX - center[0]
-    delta_y = delta_y if delta_y != 0 else delta_y + 1
-    k = (farthestPointY - center[1]) / delta_y
-    b = center[1] - k * center[0]
+    for ro in range(radious // 3, radious):
+        for theta in range(angle - 2, angle + 2):
+            angleTemp = theta / 180 * np.pi
+            x, y = int(ro * np.cos(angleTemp)) + center[0], int(ro * np.sin(angleTemp)) + center[1]
+            res.append([x, y])
 
-    for x in range(min(farthestPointX, center[0]), max(farthestPointX, center[0])):
-        for y in range(min(farthestPointY, center[1]), max(farthestPointY, center[1])):
-            if k * x + b - 2 <= y <= k * x + b + 2:
-                res.append([x, y])
+    # width = 2
+    #
+    #
+    # for x in range(min(farthestPointX, center[0]), max(farthestPointX, center[0])):
+    #     for y in range(min(farthestPointY, center[1]), max(farthestPointY, center[1])):
+    #         if k * x + b - 2 <= y <= k * x + b + 2:
+    #             res.append([x, y])
 
     return res, [farthestPointX, farthestPointY]
 

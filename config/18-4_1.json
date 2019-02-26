@@ -1,0 +1,38 @@
+{
+    "name": "18-4",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 114,
+        "y": 178,
+        "w": 1468,
+        "h": 768
+    },
+    "startPoint": {
+        "x": 52,
+        "y": 54
+    },
+    "endPoint": {
+        "x": 240,
+        "y": 195
+    },
+    "centerPoint": {
+        "x": 237,
+        "y": 56
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "KWH",
+    "result": 0.0
+}

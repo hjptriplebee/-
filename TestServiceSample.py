@@ -8,10 +8,6 @@ import multiprocessing
 
 from Interface import meterReader
 
-import warnings
-warnings.filterwarnings("ignore")
-
-
 def startServer():
     os.system("python FlaskService.py")
 
@@ -19,15 +15,13 @@ def startServer():
 def startClient(results):
     images = os.listdir("image")
     for im in images:
-        image = open("image/"+im, "rb")
-        imageByte = base64.b64encode(image.read())
+        path = "image/" + im
         data = json.dumps({
-            "image": imageByte.decode("ascii"),
+            "path": path,
             "imageID": im.split('.')[0]
         })
 
         r = requests.post("http://127.0.0.1:5000/", data=data.encode("utf-8"))
-
         receive = json.loads(r.text)
         print(im, receive)
 
@@ -36,29 +30,63 @@ def startClient(results):
 
 def codecov():
     images = os.listdir("image")
+    videos = os.listdir("video_")
     config = os.listdir("config")
+
+    # image = cv2.imread("image/11-1-10040-1-15-23-2019-01-25-22-08-06.jpg")
+    # print(meterReader(image, ["11-1_1"]))
     for im in images:
         image = cv2.imread("image/"+im)
         print(im)
+
         for i in range(1, 6):
             cfg = im.split(".jpg")[0]+"_"+str(i)
-            # print(cfg)
             if cfg+".json" in config:
                 receive2 = meterReader(image, [cfg])
+                print(cfg, receive2)
+
+    # for vi in videos:
+    #     video = cv2.VideoCapture("video_/"+vi)
+    #     print(vi)
+    #
+    #     for i in range(1, 6):
+    #         cfg = vi.split(".mp4")[0]+"_"+str(i)
+    #         print(cfg)
+            # if cfg+".json" in config:
+            #     receive2 = meterReader(video, [cfg])
+            #     print(cfg, receive2)
+
+    # video = cv2.VideoCapture("video_/5-1.mp4")
+    # receive2 = meterReader(video, ["5-1_1"])
+    # print(receive2)
+
     print("codecov done")
 
 
 if __name__ == "__main__":
-    serverProcess = multiprocessing.Process(target=startServer)
-    results = multiprocessing.Manager().list()
-    clientProcess = multiprocessing.Process(target=startClient, args=(results,))
-    serverProcess.start()
-    time.sleep(30)
-    clientProcess.start()
-    clientProcess.join()
-    serverProcess.terminate()
+
+    # serverProcess = multiprocessing.Process(target=startServer)
+    # results = multiprocessing.Manager().list()
+    # clientProcess = multiprocessing.Process(target=startClient, args=(results,))
+    # serverProcess.start()
+    # time.sleep(30)
+    # clientProcess.start()
+    # clientProcess.join()
+    # serverProcess.terminate()
 
     codecov()
+    #
+    # for i in range(20):
+    #     serverProcess = multiprocessing.Process(target=startServer)
+    #     results = multiprocessing.Manager().list()
+    #     clientProcess = multiprocessing.Process(target=startClient, args=(results,))
+    #     serverProcess.start()
+    #     time.sleep(30)
+    #     clientProcess.start()
+    #     clientProcess.join()
+    #     serverProcess.terminate()
+    #
+    #     codecov()
 
     # for result in results:
     #     print(result)

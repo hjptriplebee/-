@@ -1,0 +1,38 @@
+{
+    "name": "23-2",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 238,
+        "y": 146,
+        "w": 1278,
+        "h": 890
+    },
+    "startPoint": {
+        "x": 62,
+        "y": 71
+    },
+    "endPoint": {
+        "x": 279,
+        "y": 235
+    },
+    "centerPoint": {
+        "x": 279,
+        "y": 72
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "KWH",
+    "result": 0.0
+}

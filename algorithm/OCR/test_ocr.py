@@ -1,7 +1,6 @@
 import cv2
-from utils import *
+from algorithm.OCR.utils import *
 
-svc = svmOCR()
 net = leNetOCR()
 
 for i in range(10):
@@ -14,8 +13,6 @@ for i in range(10):
     cv2.imshow("digit", binary)
     cv2.waitKey(500)
 
-    numSvm = svc.recognizeSvm(binary)
     numNet = net.recognizeNet(binary)
 
-    print(i, "\tsvm:", numSvm, "\tLeNet", numNet)
-    print(i, "\tsvm:", numSvm, "\tLeNet", numNet)
+    print(i, "\tLeNet", numNet)

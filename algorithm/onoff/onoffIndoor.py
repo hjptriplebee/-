@@ -5,11 +5,11 @@ from algorithm.debug import *
 from algorithm.Common import AngleFactory, meterFinderByTemplate
 from algorithm.Common import *
 import json
-"""
-获取图像的HSV空间的值
-"""
 
 def HSV(img):
+    """
+    获取图像的HSV空间的值
+    """
     HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     H, S, V = cv2.split(HSV)
 
@@ -18,23 +18,23 @@ def HSV(img):
     v = V.reshape(V.shape[0] * V.shape[1], order='C')
 
     return H, S, V, h, s, v
-"""
-对图像进行轮廓检测，获取图像的二值图
-"""
+
 def getBinary(img):
+    """
+    对图像进行轮廓检测，获取图像的二值图
+    """
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 100, 200, apertureSize=3)
     return edges
-def searchUpBlack(raw, img, x, y):
-    '''
 
+def searchUpBlack(raw, img, x, y):
+    """
     :param raw: 原图
     :param img: 二值图
-    :param thre:
     :param x:
     :param y:
     :return:
-    '''
+    """
     axis = 10  # axis是偏移因子
     grad_thre = 250  # 图像梯度变换阈值
     x = x - axis
@@ -44,9 +44,9 @@ def searchUpBlack(raw, img, x, y):
 
     while True:
         if x == 0:
-            break;
+            break
         if a != 0 and b != 0:
-            break;
+            break
         if abs(int(img[x][y] - img[x + 1][y])) > grad_thre:
             # cv2.circle(raw, (y,x), 3, (0, 255, 0), -1)
             if a == 0:
@@ -56,16 +56,15 @@ def searchUpBlack(raw, img, x, y):
         x = x - 1  # 幅度更新
     # cv2.imwrite("ww.jpg",raw)
     return y, a, y, b
-def searchRightRed(raw, img, x, y):
-    '''
 
+def searchRightRed(raw, img, x, y):
+    """
     :param raw: 原图
     :param img: 二值图
-    :param thre:
     :param x:
     :param y:
     :return:
-    '''
+    """
     axis = 10  # axis是偏移因子
     grad_thre = 250  # 图像梯度变换阈值
     x = x - axis
@@ -75,9 +74,9 @@ def searchRightRed(raw, img, x, y):
 
     while True:
         if x == 0:
-            break;
+            break
         if a != 0 and b != 0:
-            break;
+            break
         if abs(int(img[x][y] - img[x + 1][y])) > grad_thre:
             # cv2.circle(raw, (y,x), 3, (0, 255, 0), -1)
             if a == 0:
@@ -85,12 +84,11 @@ def searchRightRed(raw, img, x, y):
             else:
                 b = x
         x = x - 1  # 幅度更新
-    # cv2.imwrite("ww.jpg",raw)
 
     return y, a, y, b
 
 # 裁剪目标区域值
-def cutTarget(img, x1, y1, x2, y2,status):
+def cutTarget(img, x1, y1, x2, y2, status):
 
     if status=="left":
         len = y1 - y2
@@ -128,12 +126,13 @@ def getMatInt(Mat):
                 # print(Mat[n,m,i])
     Mat = Mat.astype(np.uint8)
     return Mat
+
 def gamma(image,thre):
-    '''
+    """
     :param image: numpy type
-           thre:float
+    :param thre: float
     :return: image numpy
-    '''
+    """
     f = image / 255.0
     # we can change thre accoding  to real condition
     # thre = 0.3
@@ -166,10 +165,7 @@ def judgeStatus(img):
     t3=t2+6
     #计算距离
     n=0
-    ts = []
-    ts.append(t1)
-    ts.append(t2)
-    ts.append(t3)
+    ts = [t1, t2, t3]
 
     for t in ts:
         if calDis(img,t)<4:
@@ -186,14 +182,6 @@ def onoffIndoor(image, info):
     :param info:bileiqi2 config
     :return:
     """
-    x1=0
-    y1=0
-    x2=0
-    y2=0
-    X=0
-    Y=0
-    img = None
-
     binary = getBinary(image)
     X, Y, _, _ = meterLocationFinderBySIFT(image, info['template'])
     if info['name']=="onoffIndoor1_1":
@@ -229,4 +217,3 @@ def onoffIndoor(image, info):
     res = json.dumps(res)
 
     return res
-    # cv2.imwrite("tar.jpg",img)

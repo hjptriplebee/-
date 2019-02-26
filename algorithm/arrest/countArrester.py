@@ -67,7 +67,10 @@ def countArrester(image, info):
         cv2.imshow("test", image)
         cv2.waitKey(0)
 
-    value = calAngleBetweenTwoVector(np.array(startPoint)-centerPoint,pointerPoint-centerPoint)
+    #value = calAngleBetweenTwoVector(np.array(startPoint)-centerPoint,pointerPoint-centerPoint)
+    if len(pointerPoint) == 0:
+        return "pointer not found!"
+    value = calAngleClockwise(np.array(startPoint), pointerPoint, centerPoint)
     value = int((value/(2*math.pi))*info["totalValue"])
     return value
 
@@ -78,12 +81,19 @@ def calAngleBetweenTwoVector(vectorA, vectorB):
     cosAngle = vectorA.dot(vectorB) / (lenA * lenB)
     angle = np.arccos(cosAngle)
     return angle
-
+def calAngleClockwise( startPoint, endPoint, centerPoint):
+    vectorA = startPoint - centerPoint
+    vectorB = endPoint - centerPoint
+    angle = calAngleBetweenTwoVector(vectorA, vectorB)
+    # if counter-clockwise
+    if np.cross(vectorA, vectorB) < 0:
+        angle = 2 * np.pi - angle
+    return angle
 # if __name__ == '__main__':
-#     file = open("config/" +"shw2_1.json")
+#     file = open("../../config/" +"shw2_1.json")
 #     info = json.load(file)
-#     info["template"] = cv2.imread("template/shw2_1.jpg")
-#     image = cv2.imread("image/shw2.jpg")
+#     info["template"] = cv2.imread("../../template/shw2_1.jpg")
+#     image = cv2.imread("../../image/shw2.jpg")
 #     value = countArrester(image, info)
 #     print(value)
 #     print(value)

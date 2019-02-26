@@ -4,15 +4,15 @@ import cv2
 
 
 def colorPressure(image, info):
-    '''
+    """
     :param image: ROI image
     :param info: information for meter
     :return: value
-    '''
+    """
     meter = meterFinderByTemplate(image, info["template"])
     # get info
     startPoint = (info["startPoint"]["x"], info["startPoint"]["y"])
-    endPoint = (info["endPoint"]["x"], info["endPoint"]["y"])
+    # endPoint = (info["endPoint"]["x"], info["endPoint"]["y"])
     centerPoint = (info["centerPoint"]["x"], info["centerPoint"]["y"])
     
     # resize meter
@@ -23,7 +23,7 @@ def colorPressure(image, info):
     rateX = width / w
     rateY = height / h
     startPoint = (int(startPoint[0] * rateX), int(startPoint[1] * rateY))
-    endPoint = (int(endPoint[0] * rateX), int(endPoint[1] * rateY))
+    # endPoint = (int(endPoint[0] * rateX), int(endPoint[1] * rateY))
     centerPoint = (int(centerPoint[0] * rateX), int(centerPoint[1] * rateY))
     
     # 去掉表盘以外区域

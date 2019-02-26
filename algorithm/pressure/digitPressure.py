@@ -1,82 +1,83 @@
 import sys
+import os
 
 from algorithm.Common import *
 from algorithm.OCR.utils import *
-from algorithm.debug import  *
+from algorithm.debug import *
+
 sys.path.append("algorithm/OCR/LeNet")
-
-black_range = [np.array([0, 0, 0]), np.array([180, 255, 220])]
-
-
-def fillAndResize(image):
-    """
-    将输入图像填充为正方形且变换为（28，28）
-    :param image:
-    :return:
-    """
-    h, w = image.shape
-    l = max(2*w, h+10)
-    ret = np.zeros((l, l), np.uint8)
-    leftTop = np.array([l/2-w/2, l/2-h/2], np.uint8)
-    ret[leftTop[1]:leftTop[1]+h, leftTop[0]:leftTop[0]+w] = image
-    ret = cv2.resize(ret, (28, 28), interpolation=cv2.INTER_CUBIC)
-    return ret
 
 
 def digitPressure(image, info):
-    net = leNetOCR()
-    svm = svmOCR()
-    template = meterFinderByTemplate(image, info["template"])
+    template = meterFinderBySIFT(image, info)
+    template = cv2.GaussianBlur(template, (3, 3), 0)
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
+    # 读取标定信息
     start = ([info["startPoint"]["x"], info["startPoint"]["y"]])
     end = ([info["endPoint"]["x"], info["endPoint"]["y"]])
     center = ([info["centerPoint"]["x"], info["centerPoint"]["y"]])
+    width = info["rectangle"]["width"]
+    height = info["rectangle"]["height"]
+    widthSplit = info["widthSplit"]
+    heightSplit = info["heightSplit"]
 
     # 计算数字表的矩形外框，并且拉直矫正
     fourth = (start[0] + end[0] - center[0], start[1] + end[1] - center[1])
     pts1 = np.float32([start, center, end, fourth])
-    pts2 = np.float32([[0, 0], [200, 0], [200, 100], [0, 100]])
+    pts2 = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
     M = cv2.getPerspectiveTransform(pts1, pts2)
-    dst = cv2.warpPerspective(template, M, (200, 100))
+    dst = cv2.warpPerspective(template, M, (width, height))
+    # dst = cv2.equalizeHist(dst)
 
-    # 边缘检测
-    gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
-    edge = cv2.Canny(gray, 30, 70)
+    # 网络初始化
+    MyNet = newNet()
+    myRes = []
 
-    # if ifShow:
-    #     cv2.imshow("edge", edge)
-    #     cv2.waitKey(0)
+    for i in range(len(heightSplit)):
+        split = widthSplit[i]
+        myNum = ""
+        for j in range(len(split) - 1):
+            if "decimal" in info.keys() and j == info["decimal"][i]:
+                myNum += "."
+                continue
+            img = dst[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
 
-    # 各个数字位的横纵坐标
-    split = [2, 34, 69, 102, 132, 163]
-    height = [23, 88]
-    res = 0
+            # cv2.imshow("debug3", img)
+            if info["digitType"] != "TTC":
+                img = cv2.GaussianBlur(img, (5, 5), 0)
+                img = cv2.equalizeHist(img)
+                # cv2.imshow("debug", img)
+                img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 13, 11)
+            elif info["digitType"] == "TTC":
+                img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 55, 11)
+            # cv2.imshow("debug2", img)
 
-    # 分别从途中截取每个数字，经过膨胀腐蚀尽量使其达到实心
-    # 输入网络中进行识别
-    for i in range(5):
-        num = edge[height[0]:height[1], split[i]:split[i+1]]
-        num = cv2.resize(num, (0, 0), fx=2, fy=2)
+            # imgNum = len(os.listdir("storeDigitData/"))
+            # cv2.imwrite("storeDigitData/" + str(imgNum) + ".jpg", img)
 
-        num = cv2.dilate(num, np.ones((9, 9), np.uint8))
-        num = cv2.erode(num, np.ones((3, 3), np.uint8))
-        num = cv2.dilate(num, np.ones((7, 7), np.uint8), 3)
-        num = cv2.erode(num, np.ones((15, 15), np.uint8), 3)
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 2))
+            img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
 
-        num = cv2.resize(num, (0, 0), fx=0.5, fy=0.5)
+            num = MyNet.recognizeNet(img)
 
-        ret, num = cv2.threshold(num, 0, 255, cv2.THRESH_BINARY)
+            myNum += num
 
-        inputNum = fillAndResize(num)
-        numNet = net.recognizeNet(inputNum)
-        numSvm = svm.recognizeSvm(inputNum)
+        myRes.append(myNum)
 
-        # if ifShow:
-        #     cv2.imshow("fill", inputNum)
-        #     print(numNet, numSvm )
-        #     cv2.waitKey(0)
+    if info["digitType"] == "KWH":
+        myRes[0] = myRes[0][:4]+myRes.pop(1)
 
-        res = 10*res + numNet
+    for i in range(len(myRes)):
+        temp = ""
+        for j, c in enumerate(myRes[i]):
+            if c != "?":
+                temp += c
+            elif j != 0:
+                temp += str(random.randint(0, 9))
+        myRes[i] = temp
+
+    K.clear_session()
 
     if ifShow:
         cv2.circle(template, (start[0], start[1]), 5, (0, 0, 255), -1)
@@ -85,7 +86,7 @@ def digitPressure(image, info):
         cv2.circle(template, (fourth[0], fourth[1]), 5, (255, 255, 0), -1)
         cv2.imshow("tem", template)
         cv2.imshow("rec", dst)
-        cv2.imwrite("digit.jpg", dst)
+        print(myRes)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-    return res
+    return myRes

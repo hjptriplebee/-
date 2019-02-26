@@ -19,11 +19,11 @@ def getMatInt(Mat):
 
 
 def gamma(image, thre):
-    '''
+    """
     :param image: numpy type
-           thre:float
+    :param thre:float
     :return: image numpy
-    '''
+    """
 
     f = image / 255.0
     # we can change thre accoding  to real condition
@@ -66,13 +66,6 @@ def GetHsvProperty(h, s, v):
 
 # 针对红颜色吸湿器,备用
 def RedReader(image, info):
-    # init below vars ,
-    h_ave = -1
-    s_ave = -1
-    v_ave = -1
-    h_var = -1
-    s_var = -1
-    v_var = -1
     """
     :param image: ROI image
     :param info: information for this meter
@@ -93,7 +86,7 @@ def RedReader(image, info):
     cv2.imwrite("gamma.jpg", image)
     image = cv2.imread("gamma.jpg")
 
-    meter = meterFinderByTemplate(image, info["template"])
+    meter = (image, info["template"])
 
     h, s, v = HSV(meter)
     h_ave, s_ave, v_ave, h_var, s_var, v_var = GetHsvProperty(h, s, v)
@@ -114,7 +107,7 @@ def RedReader(image, info):
 
 def getBlock(image, size=30):
     """
-    :param img: 300*300
+    :param image: 300*300
     :param size:
     :return:
     """
@@ -144,7 +137,7 @@ def countTarPer(h_vec, thre, which):
     elif which == "blue":
         for d in h_vec:
             N = N + 1
-            if d > blue_below_thre and d < thre:
+            if blue_below_thre < d < thre:
                 n = n + 1
     return n, float(n / N)
 

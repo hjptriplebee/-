@@ -66,7 +66,7 @@ def checkBleno(image, info):
 
     if ifShow:
         cv2.circle(roi, (min_center[0], min_center[1]), min_center[2], (255, 0, 0), cv2.LINE_4)
-        cv2.imshow("ROI", roi)
+        cv2.imshow("image", roi)
         cv2.waitKey(0)
     return res
 

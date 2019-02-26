@@ -1,0 +1,38 @@
+{
+    "name": "21-1",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 192,
+        "y": 146,
+        "w": 1300,
+        "h": 882
+    },
+    "startPoint": {
+        "x": 55,
+        "y": 66
+    },
+    "endPoint": {
+        "x": 250,
+        "y": 212
+    },
+    "centerPoint": {
+        "x": 247,
+        "y": 61
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "RPC_V",
+    "result": 0.0
+}

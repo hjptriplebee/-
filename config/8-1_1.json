@@ -1,0 +1,38 @@
+{
+    "name": "8-1",
+    "type": "videoDigit",
+    "ROI": {
+        "x": 20,
+        "y": 26,
+        "w": 1860,
+        "h": 1026
+    },
+    "startPoint": {
+        "x": 50,
+        "y": 62
+    },
+    "endPoint": {
+        "x": 342,
+        "y": 229
+    },
+    "centerPoint": {
+        "x": 337,
+        "y": 54
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "VIDEO",
+    "result": 0.0
+}

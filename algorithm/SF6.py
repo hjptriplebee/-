@@ -17,8 +17,8 @@ def SF6Reader(image, info):
     totalValue = info["totalValue"]
 
     # template match
-    # meter = meterFinderByTemplate(image, infcentero["template"])
-    meter = meterFinderBySIFT(image, info["template"])
+    # meter = (image, infcentero["template"])
+    meter = meterFinderBySIFT(image, info)
 
     # resize to a fixed size
     fixHeight = 300

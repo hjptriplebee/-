@@ -1,7 +1,7 @@
 import cv2
 from algorithm.OCR.utils import *
 
-net = leNetOCR()
+net = newNet()
 
 for i in range(10):
     image = cv2.imread("bin/"+str(i)+".jpg", cv2.IMREAD_GRAYSCALE)

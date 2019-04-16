@@ -1,8 +1,8 @@
-import numpy as np
 import cv2
+import numpy as np
 
-from algorithm.debug import *
 from algorithm.Common import scanPointer, meterFinderByTemplate
+from configuration import *
 
 
 def doubleArrester(image, info):

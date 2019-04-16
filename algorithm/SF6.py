@@ -1,5 +1,5 @@
 from algorithm.Common import *
-from algorithm.debug import *
+from configuration import *
 
 
 def SF6Reader(image, info):

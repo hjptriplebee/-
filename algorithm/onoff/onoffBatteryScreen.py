@@ -1,8 +1,8 @@
-from algorithm.Common import meterFinderBySIFT
-from algorithm.debug import *
-
 import cv2
 import numpy as np
+
+from algorithm.Common import meterFinderBySIFT
+from configuration import *
 
 
 def onoffBatteryHardCode(image, info):

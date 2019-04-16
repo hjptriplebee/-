@@ -1,9 +1,10 @@
+import math
+
 import cv2
 import numpy as np
-import math
 from sklearn.metrics.pairwise import pairwise_distances
 
-from algorithm.debug import *
+from configuration import *
 
 
 def meterFinderByTemplate(image, template):
@@ -112,6 +113,11 @@ def meterFinderBySIFT(image, info):
     :return: bbox image
     """
     template = info["template"]
+
+    # cv2.imshow("template", template)
+    # cv2.imshow("image", image)
+    # cv2.waitKey(0)
+
     startPoint = (info["startPoint"]["x"], info["startPoint"]["y"])
     centerPoint = (info["centerPoint"]["x"], info["centerPoint"]["y"])
     endPoint = (info["endPoint"]["x"], info["endPoint"]["y"])
@@ -132,8 +138,9 @@ def meterFinderBySIFT(image, info):
     # for debug
     # templateBlurred = cv2.drawKeypoints(templateBlurred, templateKeyPoint, templateBlurred)
     # imageBlurred = cv2.drawKeypoints(imageBlurred, imageKeyPoint, imageBlurred)
-    # cv2.imshow("template", templateBlurred)
+    # # cv2.imshow("template", templateBlurred)
     # cv2.imshow("image", imageBlurred)
+    # cv2.waitKey(0)
 
     # match
     bf = cv2.BFMatcher()
@@ -142,7 +149,6 @@ def meterFinderBySIFT(image, info):
 
     # The first one is better than the second one
     good = [[m] for m, n in matches if m.distance < 0.8 * n.distance]
-
     # distance matrix
     templatePointMatrix = np.array([list(templateKeyPoint[p[0].queryIdx].pt) for p in good])
     imagePointMatrix = np.array([list(imageKeyPoint[p[0].trainIdx].pt) for p in good])
@@ -168,6 +174,7 @@ def meterFinderBySIFT(image, info):
 
     # not match
     if len(good2) < 3:
+        print("not found!")
         return template
 
     # 寻找转换矩阵 M
@@ -176,6 +183,7 @@ def meterFinderBySIFT(image, info):
     M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
     matchesMask = mask.ravel().tolist()
     h, w, _ = template.shape
+
     # 找出匹配到的图形的四个点和标定信息里的所有点
     pts = np.float32(
         [[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0], [startPoint[0], startPoint[1]], [endPoint[0], endPoint[1]],
@@ -220,11 +228,13 @@ def meterFinderBySIFT(image, info):
     centerPoint = (int(round(newpoints[6][0]) - newpoints[0][0]), int(round(newpoints[6][1]) - newpoints[0][1]))
 
     def isOverflow(point, width, height):
-        if point[0] < 0 or point[1] < 0 or point[0] > height - 1 or point[1] > width - 1:
+        if point[0] < 0 or point[1] < 0 or point[0] > width - 1 or point[1] > height - 1:
             return True
         return False
 
-    if isOverflow(startPoint, width, height) or isOverflow(endPoint, width, height) or isOverflow(centerPoint, width, height):
+    if isOverflow(startPoint, width, height) or isOverflow(endPoint, width, height) or isOverflow(centerPoint, width,
+                                                                                                  height):
+        print("overflow!")
         return template
 
     # startPointUp = (int(round(newpoints[7][0]) - newpoints[0][0]), int(round(newpoints[7][1]) - newpoints[0][1]))
@@ -288,9 +298,10 @@ class AngleFactory:
         :param totalValue: total value
         :return: value
         """
+        # print(startPoint, endPoint, centerPoint, pointerPoint, startValue, totalValue)
         angleRange = cls.calAngleClockwise(startPoint, endPoint, centerPoint)
         angle = cls.calAngleClockwise(startPoint, pointerPoint, centerPoint)
-        value = angle / angleRange * totalValue + startValue
+        value = angle / angleRange * (totalValue - startValue) + startValue
         if value > totalValue or value < startValue:
             return startValue if angle > np.pi + angleRange / 2 else totalValue
         return value
@@ -381,8 +392,10 @@ def scanPointer(meter, info):
     thresh = cv2.bitwise_and(thresh, mask)
     cv2.circle(thresh, (center[0], center[1]), int(radious / 3), (0, 0, 0), -1)
 
-    thresh = cv2.erode(thresh, np.ones((3, 3), np.uint8), 3)
-    thresh = cv2.dilate(thresh, np.ones((5, 5), np.uint8))
+    # thresh = cv2.erode(thresh, np.ones((3, 3), np.uint8), 3)
+    # thresh = cv2.dilate(thresh, np.ones((5, 5), np.uint8))
+    # cv2.imshow("img", thresh)
+    # cv2.waitKey(1)
 
     thresh = cv2.ximgproc.thinning(thresh, thinningType=cv2.ximgproc.THINNING_ZHANGSUEN)
 
@@ -418,17 +431,17 @@ def scanPointer(meter, info):
     elif end[0] == outerPoint[0] and end[1] == outerPoint[1]:
         degree = endVal
     else:
-        if start.all() == end.all():
+        if start[0] == end[0] and start[1] == end[1]:
             end[0] -= 1
             end[1] -= 3
         degree = AngleFactory.calPointerValueByOuterPoint(start, end, center, outerPoint, startVal, endVal)
 
     # small value to zero
-    if degree < 0.05 * endVal:
+    if degree - startVal < 0.05 * (endVal - startVal):
         degree = startVal
 
     if ifShow:
-        # print(degree, start, center, outerPoint)
+        print(degree, start, center, outerPoint)
         cv2.circle(meter, (outerPoint[0], outerPoint[1]), 10, (0, 0, 255), -1)
         cv2.line(meter, (center[0], center[1]), (outerPoint[0], outerPoint[1]), (0, 0, 255), 5)
         cv2.line(meter, (center[0], center[1]), (start[0], start[1]), (255, 0, 0), 3)

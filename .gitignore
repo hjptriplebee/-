@@ -3,12 +3,7 @@
 storeDigitData/
 .DS_Store
 test.py
-numbers/
-szkPressure.py
-get_test.py
-pre_images/
-algorithm/OCR/newNet/images/
-
+IMAGES
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,5 +1,5 @@
 from algorithm.Common import *
-from algorithm.debug import *
+from configuration import *
 
 red_range = [np.array([156, 120, 80]), np.array([179, 240, 220])]
 white_range = [np.array([0, 0, 200]), np.array([180, 30, 255])]

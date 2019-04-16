@@ -7,6 +7,7 @@ from algorithm.Common import *
 
 plot_index = 0
 
+
 def normalPressure(image, info):
     """
     :param image: ROI image
@@ -15,18 +16,22 @@ def normalPressure(image, info):
     """
     meter = meterFinderBySIFT(image, info)
     result = scanPointer(meter, info)
-    return result
+    result = int(result * 1000) / 1000
+    return [result]
+
 
 def inc():
     global plot_index
     plot_index += 1
     return plot_index
 
+
 def calAvgRadius(center, end_ptr, radius, start_ptr):
     radius_1 = np.sqrt(np.power(start_ptr[0] - center[0], 2) + np.power(start_ptr[1] - center[1], 2))
     radius_2 = np.sqrt(np.power(end_ptr[0] - center[0], 2) + np.power(end_ptr[1] - center[1], 2))
     radius = np.int64((radius_1 + radius_2) / 2)
     return radius
+
 
 def cvtPtrDic2D(dic_ptr):
     """
@@ -40,6 +45,7 @@ def cvtPtrDic2D(dic_ptr):
         return np.array([0, 0])
     return dic_ptr
 
+
 def cv2PtrTuple2D(tuple):
     """
     tuple 转numpy 数组
@@ -51,6 +57,7 @@ def cv2PtrTuple2D(tuple):
     else:
         return np.array([0, 0])
     return tuple
+
 
 def cleanNoisedRegions(src, info, shape):
     """

@@ -1,9 +1,7 @@
 import functools
-from algorithm.debug import *
-import numpy as np
 
 from algorithm.Common import *
-from algorithm.debug import *
+from configuration import *
 
 
 def cmp(contour1, contour2):

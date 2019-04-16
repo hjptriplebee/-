@@ -5,66 +5,81 @@ import os
 import time
 import cv2
 import multiprocessing
+from configuration import *
 
 from Interface import meterReader
+
 
 def startServer():
     os.system("python FlaskService.py")
 
 
 def startClient(results):
-    images = os.listdir("image")
+    images = os.listdir("info/20190410/IMAGES/Pic_2")
     for im in images:
-        path = "image/" + im
+        path = "info/20190410/IMAGES/Pic_2/" + im
         data = json.dumps({
             "path": path,
-            "imageID": im.split('.')[0]
+            "imageID": im.split('.')[0] + "_1"
         })
-
+        print(path, im)
+        print(data)
         r = requests.post("http://127.0.0.1:5000/", data=data.encode("utf-8"))
+        print(r.text)
         receive = json.loads(r.text)
         print(im, receive)
 
         results.append(True)
 
 
+def testReadyStatus():
+    imgPath = "image"
+    configPath = "info/20190410/config"
+    images = os.listdir(imgPath)
+    config = os.listdir(configPath)
+    for im in images:
+        filename, extention = os.path.splitext(im.lower())
+        if extention == '.jpg' or extention == '.png':
+            image = cv2.imread(imgPath + "/" + im)
+            for i in range(1, 6):
+                cfg = filename + "_" + str(i)
+                if cfg + ".json" in config:
+                    receive2 = meterReader(image, [cfg])
+                    print(cfg, receive2)
+
+
 def codecov():
     images = os.listdir("image")
-    videos = os.listdir("video_")
     config = os.listdir("config")
 
-    # image = cv2.imread("image/11-1-10040-1-15-23-2019-01-25-22-08-06.jpg")
-    # print(meterReader(image, ["11-1_1"]))
     for im in images:
-        image = cv2.imread("image/"+im)
+        image = cv2.imread(imgPath + "/" + im)
         print(im)
+        pos = im.split(".")[0].split("-")
 
         for i in range(1, 6):
-            cfg = im.split(".jpg")[0]+"_"+str(i)
-            if cfg+".json" in config:
+            cfg = pos[0] + "-" + pos[1] + "_" + str(i)
+            if cfg + ".json" in config:
                 receive2 = meterReader(image, [cfg])
                 print(cfg, receive2)
-
-    # for vi in videos:
-    #     video = cv2.VideoCapture("video_/"+vi)
-    #     print(vi)
-    #
-    #     for i in range(1, 6):
-    #         cfg = vi.split(".mp4")[0]+"_"+str(i)
-    #         print(cfg)
-            # if cfg+".json" in config:
-            #     receive2 = meterReader(video, [cfg])
-            #     print(cfg, receive2)
-
-    # video = cv2.VideoCapture("video_/5-1.mp4")
-    # receive2 = meterReader(video, ["5-1_1"])
-    # print(receive2)
 
     print("codecov done")
 
 
-if __name__ == "__main__":
+def testVideo():
+    video_path = ("video_")
+    config = os.listdir("config")
 
+    for file in os.listdir(video_path):
+        if file.startswith(".DS"):
+            continue
+        video = cv2.VideoCapture(os.path.join(video_path, file))
+        result = meterReader(video, [file[:-4] + "_1"])
+        print(file, result)
+    print("codecov done")
+
+
+if __name__ == "__main__":
     # serverProcess = multiprocessing.Process(target=startServer)
     # results = multiprocessing.Manager().list()
     # clientProcess = multiprocessing.Process(target=startClient, args=(results,))
@@ -73,8 +88,9 @@ if __name__ == "__main__":
     # clientProcess.start()
     # clientProcess.join()
     # serverProcess.terminate()
-
+    # testReadyStatus()
     codecov()
+    # testVideo()
     #
     # for i in range(20):
     #     serverProcess = multiprocessing.Process(target=startServer)
@@ -92,43 +108,3 @@ if __name__ == "__main__":
     #     print(result)
     #     if not result:
     #         exit(100)
-
-
-# test store interface
-# image = open("template/1_1.jpg", "rb")
-# imageByte = base64.b64encode(image.read())
-# data = json.dumps({
-#     "template": imageByte.decode("ascii"),
-#     "imageID": "1",
-#     "config": {
-#       "distance": 10.0,
-#       "horizontal": 10.0,
-#       "vertical": 20.0,
-#       "name": "1_1",
-#       "type": "SF6",
-#       "ROI": {
-#           "x": 200,
-#           "y": 200,
-#           "w": 1520,
-#           "h": 680
-#       },
-#       "startPoint": {
-#           "x": -1,
-#           "y": -1
-#       },
-#       "endPoint": {
-#           "x": -1,
-#           "y": -1
-#       },
-#       "centerPoint": {
-#           "x": -1,
-#           "y": -1
-#       },
-#       "startValue": 0.0,
-#       "totalValue": 2.0
-#     }
-# })
-#
-# r = requests.post("http://127.0.0.1:5000/store", data=data.encode("utf-8"))
-#
-# print(r.text)

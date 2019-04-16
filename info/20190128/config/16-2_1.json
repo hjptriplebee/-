@@ -1,0 +1,38 @@
+{
+    "name": "test",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 168,
+        "y": 84,
+        "w": 1608,
+        "h": 928
+    },
+    "startPoint": {
+        "x": 64,
+        "y": 65
+    },
+    "endPoint": {
+        "x": 270,
+        "y": 232
+    },
+    "centerPoint": {
+        "x": 269,
+        "y": 80
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "RPC_V",
+    "result": 0.0
+}

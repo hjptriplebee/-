@@ -1,90 +1,48 @@
 import cv2
 import sys
+import os
 import numpy as np
 import torch
+from collections import defaultdict
 
-from algorithm.Common import meterFinderBySIFT
 from algorithm.pressure.digitPressure import digitPressure
-from algorithm.OCR.svm.LeNet import LeNet
+from algorithm.Common import meterFinderBySIFT
+from algorithm.OCR.character.characterNet import characterNet
 
-sys.path.append("../")
 
 def videoDigit(video, info):
     """
-    :param video: video
+    :param video: VideoCapture Input
     :param info: info
     :return: 
     """
-    global num
-    result = {}
-
-    start = ([info["startPoint"]["x"], info["startPoint"]["y"]])
-    end = ([info["endPoint"]["x"], info["endPoint"]["y"]])
-    center = ([info["centerPoint"]["x"], info["centerPoint"]["y"]])
-    width = info["rectangle"]["width"]
-    height = info["rectangle"]["height"]
-    widthSplit = info["widthSplit"]
-    heightSplit = info["heightSplit"]
-    characSplit = info["characSplit"]
-
-    # 计算数字表的矩形外框，并且拉直矫正
-    fourth = (start[0] + end[0] - center[0], start[1] + end[1] - center[1])
-    pts1 = np.float32([start, center, end, fourth])
-    pts2 = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
-    M = cv2.getPerspectiveTransform(pts1, pts2)
-
-    # 加载模型
-    # clf = joblib.load("algorithm/OCR/svm/svm_model.m")
-    net = LeNet()
-    net.load_state_dict(torch.load("algorithm/OCR/svm/character_22net.pkl"))
-
+    net = characterNet()
+    net.load_state_dict(torch.load("algorithm/OCR/character/NewNet_minLoss_model_0.965.pkl"))
     pictures = getPictures(video)  # 获得视频的帧，有少量重复帧
-    imageDict = {}
-    predicts = {}
+
+    def emptyLsit():
+        return []
+
+    imagesDict = defaultdict(emptyLsit)
     for i, frame in enumerate(pictures):
-        template = meterFinderBySIFT(frame, info)
-        template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-        template = cv2.equalizeHist(template)
-        dst = cv2.warpPerspective(template, M, (width, height))
-
-        imgType = dst[characSplit[1][0]:characSplit[1][1], characSplit[0][0]:characSplit[0][1]]
-        imgType = cv2.resize(imgType, (28, 28), interpolation=cv2.INTER_CUBIC)  # LeNet
-        imgType = cv2.adaptiveThreshold(imgType, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 17, 11)
-
-        # # svm模型
-        # hog_vec, hog_vis = feature.hog(imgType, orientations=8, pixels_per_cell=(16, 16),
-        #                                cells_per_block=(1, 1), block_norm='L2', visualise=True)
-        # hog_vec = hog_vec.reshape(1, -1)
-        # type_probe = clf.predict_proba(hog_vec)
-
-        # LeNet 模型
-        imgType = torch.Tensor(np.array(imgType, dtype=np.float32))
-        imgType = torch.unsqueeze(imgType, 0)
-        imgType = torch.unsqueeze(imgType, 0)
-        type_probe = net.forward(imgType)
-        type_probe = type_probe.detach().numpy()
-
-        # find max probability frame
-        maxIndex = np.argmax(type_probe)
-        maxs = np.max(type_probe)
-        # print(i, imgType.shape)
-        # print("predict: ", type_probe)
-        if maxIndex not in predicts.keys():
-            imageDict[maxIndex] = frame
-            predicts[maxIndex] = maxs
-        elif predicts[maxIndex] < maxs:
-            imageDict[maxIndex] = frame
-        # cv2.imshow(str(maxIndex), imgType)
+        res = digitPressure(frame, info)
+        index = checkFrame(net, frame, info)
+        imagesDict[chr(index+ord('A'))] += [res]
+        # debug
+        # title = str(chr(index+ord('A'))) + str(res)
+        # frame = cv2.putText(frame, title, (50, 100), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+        # cv2.imwrite(os.path.join("video_result", info['name']+str(i)+'.jpg'), frame)
+        # cv2.imshow(title, frame)
         # cv2.waitKey(0)
-    # read meter
-    # print(predicts)
-    # print(imageDict)
-    for k, frame in imageDict.items():
-        result[chr(int(ord("A")+k))] = digitPressure(frame, info)
-    return result
+    return imagesDict
 
 
 def getPictures(videoCapture):
+    """
+    截取视频中每隔固定时间出现的帧
+    :param videoCapture: 输入视频
+    :return: 截取的帧片段
+    """
     pictures = []
     cnt = 0
     skipFrameNum = 30
@@ -100,3 +58,52 @@ def getPictures(videoCapture):
 
     videoCapture.release()
     return pictures
+
+
+def checkFrame(net, image, info):
+    """
+    判断图片的类型A，AB等
+    :param image:  image
+    :param info: info
+    :return: 出现次序0.1.2.3
+    """
+    start = ([info["startPoint"]["x"], info["startPoint"]["y"]])
+    end = ([info["endPoint"]["x"], info["endPoint"]["y"]])
+    center = ([info["centerPoint"]["x"], info["centerPoint"]["y"]])
+    width = info["rectangle"]["width"]
+    height = info["rectangle"]["height"]
+    widthSplit = info["widthSplit"]
+    heightSplit = info["heightSplit"]
+    characSplit = info["characSplit"]
+
+    # 计算数字表的矩形外框，并且拉直矫正
+    fourth = (start[0] + end[0] - center[0], start[1] + end[1] - center[1])
+    pts1 = np.float32([start, center, end, fourth])
+    pts2 = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
+    M = cv2.getPerspectiveTransform(pts1, pts2)
+
+    template = meterFinderBySIFT(image, info)
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+    template = cv2.equalizeHist(template)
+    dst = cv2.warpPerspective(template, M, (width, height))
+
+    imgType = dst[characSplit[1][0]:characSplit[1][1], characSplit[0][0]:characSplit[0][1]]
+    imgType = cv2.adaptiveThreshold(imgType, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 17, 11)
+    imgType = cv2.bitwise_not(imgType)
+
+    # orimage = imgType.copy()
+
+    imgType = torch.Tensor(np.array(imgType, dtype=np.float32))
+    imgType = torch.unsqueeze(imgType, 0)
+    imgType = torch.unsqueeze(imgType, 0)
+    type_probe = net.forward(imgType)
+    type_probe = type_probe.detach().numpy()
+    maxIndex = np.argmax(type_probe)
+
+    # debug
+    # cv2.imshow(str(chr(maxIndex+ord('A'))), orimage)
+    # type = str(chr(maxIndex+ord('A')))
+    # cv2.imwrite(os.path.join("video_result", type+info['name']+'_'+str(type_probe)+'.jpg'), orimage)
+    # cv2.waitKey(0)
+
+    return maxIndex

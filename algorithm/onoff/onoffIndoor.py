@@ -1,10 +1,7 @@
-import math
-import numpy as np
-import cv2
-from algorithm.debug import *
-from algorithm.Common import AngleFactory, meterFinderByTemplate
-from algorithm.Common import *
 import json
+
+from algorithm.Common import *
+
 
 def HSV(img):
     """

@@ -1,0 +1,38 @@
+{
+    "name": "null",
+    "type": "normalPressure",
+    "ROI": {
+        "x": 55,
+        "y": 55,
+        "w": 1180,
+        "h": 630
+    },
+    "startPoint": {
+        "x": 44,
+        "y": 176
+    },
+    "endPoint": {
+        "x": 155,
+        "y": 58
+    },
+    "centerPoint": {
+        "x": 153,
+        "y": 169
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0.0,
+    "totalValue": 200.0,
+    "digitType": "False",
+    "result": 0.0
+}

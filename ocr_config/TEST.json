@@ -1,0 +1,15 @@
+{
+  "rectangle": {
+    "width": 110,
+     "height": 155
+  },
+  "widthSplit": [
+    [3,50,91]
+  ],
+  "heightSplit": [
+    [47,127]
+  ],
+  "decimal":[
+    2
+  ]
+}

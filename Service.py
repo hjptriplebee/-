@@ -45,7 +45,7 @@ class meterReaderService:
         clientSocket.close()
         print('Close new connection from %s:%s...' % clientAddress)
 
-    def startServer(self, port = 9999, maxConnection = 5):
+    def startServer(self, port=9999, maxConnection=5):
         """
         start service
         :param port: port

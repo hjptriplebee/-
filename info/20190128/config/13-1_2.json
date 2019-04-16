@@ -1,0 +1,38 @@
+{
+    "name": "test",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 760,
+        "y": 166,
+        "w": 980,
+        "h": 760
+    },
+    "startPoint": {
+        "x": 150,
+        "y": 141
+    },
+    "endPoint": {
+        "x": 337,
+        "y": 231
+    },
+    "centerPoint": {
+        "x": 335,
+        "y": 139
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "ANGLE",
+    "result": 0.0
+}

@@ -20,21 +20,21 @@ class myNet(nn.Module):
                 kernel_size=3,
                 padding=1
             ),  # padding=2保证输入输出尺寸相同
-            nn.ReLU(),  # input_size=(6*24*24)
-            nn.MaxPool2d(kernel_size=2, stride=2)  # output_size=(6*14*14)
+            nn.ReLU(),  # input_size=(16*28*28)
+            nn.MaxPool2d(kernel_size=2, stride=2)  # output_size=(16*14*14)
         )
         self.conv2_1 = nn.Sequential(
             nn.Conv2d(
                 in_channels=16,
                 out_channels=32,
                 kernel_size=3),
-        )
+        )  # output 32*12*12
         self.conv2_2 = nn.Sequential(
             nn.Conv2d(
                 in_channels=32,
                 out_channels=32,
                 kernel_size=3),
-            nn.ReLU(),  # input_size=(8*10*10)
+            nn.ReLU(),  # input_size=(32*10*10)
             nn.MaxPool2d(2, 2)  # output_size=(8*5*5)
         )
         self.fc1 = nn.Linear(32 * 5 * 5, 128)

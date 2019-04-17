@@ -59,10 +59,10 @@ def meterReaderAPI():
 
         # recognitionData = None
         #
-        # if path[-4:] != ".jpg":
-        #     recognitionData = cv2.VideoCapture(path)
-        # else:
-        recognitionData = cv2.imread(path)
+        if path[-4:] != ".jpg":
+            recognitionData = cv2.VideoCapture(path)
+        else:
+            recognitionData = cv2.imread(path)
         # print(path, np.shape(recognitionData))
     except:
         return json.dumps({"error": "json format error!"})

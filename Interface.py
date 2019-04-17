@@ -2,25 +2,26 @@ import json
 import os
 
 import cv2
-from algorithm.absorb import absorb
-from algorithm.Blenometer import checkBleno
-from algorithm.SF6 import SF6Reader
-from algorithm.oilTempreture import oilTempreture
-from algorithm.highlightDigitMeter import highlightDigit
-from algorithm.videoDigit import videoDigit
+from Algorithm.absorb import absorb
+from Algorithm.Blenometer import checkBleno
+from Algorithm.SF6 import SF6Reader
+from Algorithm.oilTempreture import oilTempreture
+from Algorithm.videoDigit import videoDigit
 
-from algorithm.arrest.countArrester import countArrester
-from algorithm.arrest.doubleArrester import doubleArrester
+from Algorithm.arrest.countArrester import countArrester
+from Algorithm.arrest.doubleArrester import doubleArrester
 
-from algorithm.pressure.digitPressure import digitPressure
-from algorithm.pressure.normalPressure import normalPressure
-from algorithm.pressure.colorPressure import colorPressure
+from Algorithm.pressure.digitPressure import digitPressure
+from Algorithm.pressure.normalPressure import normalPressure
+from Algorithm.pressure.colorPressure import colorPressure
 
-from algorithm.onoff.contactStatus import contactStatus
-from algorithm.onoff.onoffOutdoor import onoffOutdoor
-from algorithm.onoff.onoffBatteryScreen import onoffBattery
-from algorithm.onoff.readyStatus import readyStatus
-from algorithm.onoff.springStatus import springStatus
+
+from Algorithm.onoff.onoffIndoor import onoffIndoor
+from Algorithm.onoff.onoffOutdoor import onoffOutdoor
+from Algorithm.onoff.onoffBatteryScreen import onoffBattery
+from Algorithm.onoff.readyStatus import readyStatus
+from Algorithm.onoff.springStatus import springStatus
+
 
 from configuration import *
 
@@ -91,8 +92,6 @@ def getInfo(ID):
         info["type"] = contactStatus
     elif info["type"] == "onoffOutdoor":
         info["type"] = onoffOutdoor
-    elif info["type"] == "highlightDigit":
-        info["type"] = highlightDigit
     elif info["type"] == "onoffBattery":
         info["type"] = onoffBattery
     elif info["type"] == "videoDigit":
@@ -134,13 +133,9 @@ def meterReader(recognitionData, meterIDs):
             # cv2.rectangle(recognitionData, (x, y), (x+w, y + h), (255, 0, 0), 3)
             # cv2.imshow("testInput", recognitionData)
             # cv2.waitKey(0)
-
             if x != 0 or y != 0 or w != 0 or h != 0:
                 ROI = recognitionData[y:y + h, x:x + w]
-                # results[ID] = meterReaderCallBack(ROI, info)
                 results.append(meterReaderCallBack(ROI, info))
-                # else:
-                # results[ID] = meterReaderCallBack(recognitionData, info)
+            else:
                 results.append(meterReaderCallBack(recognitionData, info))
-
     return results

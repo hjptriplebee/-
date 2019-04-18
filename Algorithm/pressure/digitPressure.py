@@ -6,29 +6,20 @@ import numpy as np
 
 from Algorithm.OCR.utils import newNet
 from Algorithm.utils.Finder import meterFinderBySIFT
+from Algorithm.utils.boxRectifier import boxRectifier
 from configuration import *
 
 
 def digitPressure(image, info):
     template = meterFinderBySIFT(image, info)
     template = cv2.GaussianBlur(template, (3, 3), 0)
-    # template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
     # 读取标定信息
-    start = ([info["startPoint"]["x"], info["startPoint"]["y"]])
-    end = ([info["endPoint"]["x"], info["endPoint"]["y"]])
-    center = ([info["centerPoint"]["x"], info["centerPoint"]["y"]])
-    width = info["rectangle"]["width"]
-    height = info["rectangle"]["height"]
     widthSplit = info["widthSplit"]
     heightSplit = info["heightSplit"]
 
-    # 计算数字表的矩形外框，并且拉直矫正
-    fourth = (start[0] + end[0] - center[0], start[1] + end[1] - center[1])
-    pts1 = np.float32([start, center, end, fourth])
-    pts2 = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
-    M = cv2.getPerspectiveTransform(pts1, pts2)
-    dst = cv2.warpPerspective(template, M, (width, height))
+    # 由标定点得到液晶区域
+    dst = boxRectifier(template, info)
 
     # 灰度图
     gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
@@ -96,11 +87,6 @@ def digitPressure(image, info):
         myRes[i] = float(temp)
 
     if ifShow:
-        cv2.circle(template, (start[0], start[1]), 5, (0, 0, 255), -1)
-        cv2.circle(template, (end[0], end[1]), 5, (0, 255, 0), -1)
-        cv2.circle(template, (center[0], center[1]), 5, (255, 0, 0), -1)
-        cv2.circle(template, (fourth[0], fourth[1]), 5, (255, 255, 0), -1)
-        cv2.imshow("tem", template)
         cv2.imshow("rec", dst)
         cv2.imshow("image", image)
         print(myRes)

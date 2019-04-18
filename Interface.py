@@ -1,6 +1,5 @@
 import json
 import os
-
 import cv2
 from Algorithm.absorb import absorb
 from Algorithm.Blenometer import checkBleno

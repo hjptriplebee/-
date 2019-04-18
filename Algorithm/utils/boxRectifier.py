@@ -8,7 +8,7 @@ def boxRectifier(templateImage, info):
     start = ([info["startPoint"]["x"], info["startPoint"]["y"]])
     end = ([info["endPoint"]["x"], info["endPoint"]["y"]])
     center = ([info["centerPoint"]["x"], info["centerPoint"]["y"]])
-    if "rectangel" in info:
+    if "rectangle" in info:
         width = info["rectangle"]["width"]
         height = info["rectangle"]["height"]
     else:

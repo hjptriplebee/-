@@ -91,6 +91,6 @@ if __name__ == "__main__":
 
     # Single Test
 
-    # testReadyStatus()
-    codecov()
+    testReadyStatus()
+    # codecov()
     # testVideo()

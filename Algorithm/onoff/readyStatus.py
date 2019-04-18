@@ -1,10 +1,10 @@
 import time
-
+import os
 import cv2
 import numpy as np
 
-
-from Algorithm.utils.Finder import meterFinderByTemplate
+from Algorithm.utils.Finder import meterFinderByTemplate, meterFinderBySIFT
+from Algorithm.utils.boxRectifier import boxRectifier
 
 
 def isDark(img):
@@ -45,11 +45,15 @@ def isDark(img):
 
 def readyStatus(img, info):
     template = info['template']
-    image = meterFinderByTemplate(img, info['template'])
+    # match_res =meterFinderByTemplate(img, info['template'])
+    match_res = meterFinderBySIFT(img, info)
+    image = boxRectifier(match_res, info)
+    # cv2.imshow('Image', image)
+    # cv2.waitKey(0)
     # if image is dark enough, do gamma correction for enhancing dark details
     if isDark(image):
         max = np.max(image)
-        image = np.power(image / float(max), 1/3) * max
+        image = np.power(image / float(max), 1 / 3) * max
         image = image.astype(np.uint8)
         # cv2.imshow('Gamma', image)
         # cv2.waitKey(0)
@@ -61,7 +65,8 @@ def readyStatus(img, info):
     # load the input image and grab the image dimensions
     (H, W) = image.shape[:2]
     # path to input EAST text detector
-    model_name = 'frozen_east_text_detection.pb'
+    current_path = os.path.dirname(os.path.abspath(__file__)) + os.path.sep
+    model_path = os.path.abspath(current_path + "/frozen_east_text_detection.pb")
     # set the new width and height and then determine the ratio in change
     # for both the width and height
     # image width should be multiple of 32, so do height
@@ -80,7 +85,7 @@ def readyStatus(img, info):
         "feature_fusion/concat_3"]
     # load the pre-trained EAST text detector
     # print("[INFO] loading EAST text detector...")
-    net = cv2.dnn.readNet(model_name)
+    net = cv2.dnn.readNet(model_path)
     # construct a blob from the image and then perform a forward pass of
     # the model to obtain the two output layer sets
     blob = cv2.dnn.blobFromImage(image, 1.0, (W, H),

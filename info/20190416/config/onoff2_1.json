@@ -2,22 +2,22 @@
   "name": "test",
   "type": "ready",
   "ROI": {
-    "x": 171,
-    "y": 47,
-    "w": 90,
-    "h": 90
+    "x": 140,
+    "y": 9,
+    "w": 155,
+    "h": 139
   },
   "startPoint": {
-    "x": 23,
-    "y": 149
+    "x": 27,
+    "y": 45
   },
   "endPoint": {
-    "x": 148,
-    "y": 35
+    "x": 76,
+    "y": 92
   },
   "centerPoint": {
-    "x": 147,
-    "y": 150
+    "x": 77,
+    "y": 44
   },
   "startValue": 0,
   "totalValue": 12,

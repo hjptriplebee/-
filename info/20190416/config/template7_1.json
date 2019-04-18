@@ -2,22 +2,22 @@
     "name": "test",
     "type": "spring",
     "ROI": {
-        "x": 510,
-        "y": 760,
-        "w": 230,
-        "h": 140
+        "x": 220,
+        "y": 613,
+        "w": 505,
+        "h": 204
     },
 		"startPoint": {
-			"x": 23,
-			"y": 149
+			"x": 41,
+			"y": 33
     },
 		"endPoint": {
-			"x": 148,
-			"y": 35
+			"x": 206,
+			"y": 108
     },
 		"centerPoint": {
-			"x": 147,
-			"y": 150
+			"x": 208,
+			"y": 28
     },
     "startValue": 0,
     "totalValue": 12,

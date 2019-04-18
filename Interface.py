@@ -19,6 +19,7 @@ from Algorithm.onoff.onoffOutdoor import onoffOutdoor
 from Algorithm.onoff.onoffBatteryScreen import onoffBattery
 from Algorithm.onoff.readyStatus import readyStatus
 from Algorithm.onoff.springStatus import springStatus
+from Algorithm.onoff.contactStatus import contactStatus
 
 from configuration import *
 
@@ -97,6 +98,8 @@ def getInfo(ID):
         info["type"] = readyStatus
     elif info["type"] == "spring":
         info["type"] = springStatus
+    elif info["type"] == "contact":
+        info["type"] = contactStatus
     else:
         info["type"] = None
 

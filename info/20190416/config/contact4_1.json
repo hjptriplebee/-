@@ -1,0 +1,26 @@
+{
+  "name": "test",
+  "type": "contact",
+  "ROI": {
+    "x": 269,
+    "y": 597,
+    "w": 629,
+    "h": 304
+  },
+  "startPoint": {
+    "x": 72,
+    "y": 93
+  },
+  "endPoint": {
+    "x": 221,
+    "y": 169
+  },
+  "centerPoint": {
+    "x": 218,
+    "y": 91
+  },
+  "startValue": 0,
+  "totalValue": 12,
+  "digitType": "False",
+  "result": 0.0
+}

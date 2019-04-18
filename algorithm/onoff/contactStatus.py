@@ -8,7 +8,7 @@ import numpy as np
 import math
 import json
 from algorithm.Common import meterFinderBySIFT, meterFinderByTemplate
-
+##
 # 获取图像的灰度矩阵
 def getMatrix(img):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

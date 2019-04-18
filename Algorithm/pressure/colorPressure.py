@@ -53,4 +53,4 @@ def colorPressure(image, info):
     # cv2.imshow("greenMask", greenMask)
     # cv2.imshow("intersec", intersec)
     # cv2.waitKey(0)
-    return "green" if result / 255 > 3   else "red"
+    return "green" if result / 255 > 3 else "red"

@@ -73,6 +73,8 @@ def calAngleBetweenTwoVector(vectorA, vectorB):
     cosAngle = vectorA.dot(vectorB) / (lenA * lenB)
     angle = np.arccos(cosAngle)
     return angle
+
+
 def calAngleClockwise( startPoint, endPoint, centerPoint):
     vectorA = startPoint - centerPoint
     vectorB = endPoint - centerPoint

@@ -19,7 +19,7 @@ from Algorithm.onoff.onoffOutdoor import onoffOutdoor
 from Algorithm.onoff.onoffBatteryScreen import onoffBattery
 from Algorithm.onoff.readyStatus import readyStatus
 from Algorithm.onoff.springStatus import springStatus
-
+from Algorithm.onoff.contactStatus import contactStatus
 from configuration import *
 
 
@@ -85,8 +85,8 @@ def getInfo(ID):
         info["type"] = oilTempreture
     elif info["type"] == "blenometer":
         info["type"] = checkBleno
-    elif info["type"] == "onoffIndoor":
-        info["type"] = onoffIndoor
+    elif info["type"] == "contact":
+        info["type"] = contactStatus
     elif info["type"] == "onoffOutdoor":
         info["type"] = onoffOutdoor
     elif info["type"] == "onoffBattery":
@@ -136,3 +136,4 @@ def meterReader(recognitionData, meterIDs):
             else:
                 results.append(meterReaderCallBack(recognitionData, info))
     return results
+

@@ -1,23 +1,23 @@
 {
   "name": "test",
-  "type": "ready",
+  "type": "contact",
   "ROI": {
-    "x": 409,
-    "y": 1020,
-    "w": 322,
-    "h": 307
+    "x": 37,
+    "y": 9,
+    "w": 357,
+    "h": 135
   },
   "startPoint": {
-    "x": 101,
-    "y": 74
+    "x": 30,
+    "y": 49
   },
   "endPoint": {
-    "x": 174,
-    "y": 169
+    "x": 108,
+    "y": 93
   },
   "centerPoint": {
-    "x": 173,
-    "y": 72
+    "x": 109,
+    "y": 51
   },
   "startValue": 0,
   "totalValue": 12,

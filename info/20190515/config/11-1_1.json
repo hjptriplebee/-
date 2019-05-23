@@ -1,0 +1,43 @@
+{
+    "name": "test",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 178,
+        "y": 238,
+        "w": 1172,
+        "h": 798
+    },
+    "startPoint": {
+        "x": 131,
+        "y": 57
+    },
+    "endPoint": {
+        "x": 427,
+        "y": 153
+    },
+    "centerPoint": {
+        "x": 425,
+        "y": 53
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "TTC",
+    "thresh":{
+        "block":31,
+        "param":2
+     },
+    "ifopen":"close",
+    "result": 0.0
+}

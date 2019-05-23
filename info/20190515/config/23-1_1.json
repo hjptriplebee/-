@@ -1,0 +1,43 @@
+{
+    "name": "23-1",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 50,
+        "y": 50,
+        "w": 1800,
+        "h": 900
+    },
+    "startPoint": {
+        "x": 53,
+        "y": 60
+    },
+    "endPoint": {
+        "x": 250,
+        "y": 203
+    },
+    "centerPoint": {
+        "x": 250,
+        "y": 64
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "KWH",
+    "thresh":{
+        "block":31,
+        "param":2
+    },
+    "ifopen":"close",
+    "result": 0.0
+}

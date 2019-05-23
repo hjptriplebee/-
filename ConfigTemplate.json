@@ -1,0 +1,32 @@
+{
+      "name": "null",
+      "type": "Remember",
+      "ROI": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+      },
+      "startPoint": {
+        "x": 0,
+        "y": 0
+      },
+      "endPoint": {
+        "x": 0,
+        "y": 0
+      },
+      "centerPoint": {
+        "x": 0,
+        "y": 0
+      },
+      "startValue": 0.0,
+      "totalValue": 0.0,
+      "digitType": "False",
+      "thresh":{
+          "block":31,
+          "param":2
+      },
+      "ifopen":"close",
+      "rgb": true,
+      "result": 0.0
+}

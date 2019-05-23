@@ -83,8 +83,8 @@ if __name__ == "__main__":
 
     # codecov("info/20190410/IMAGES/Pic")
     # codecov("info/20190410/IMAGES/Pic_2")
-    codecov("info/20190514/image/")
-    codecov("info/20190514/image/")
+    codecov("info/20190515/IMAGES/image")
+    # codecov("info/20190514/image/")
     #
     # codecov("info/20190416/IMAGES/image")
 

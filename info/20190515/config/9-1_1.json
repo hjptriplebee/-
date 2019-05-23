@@ -1,0 +1,44 @@
+{
+    "name": "test",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 86,
+        "y": 36,
+        "w": 1632,
+        "h": 1026
+    },
+    "startPoint": {
+        "x": 181,
+        "y": 49
+    },
+    "endPoint": {
+        "x": 418,
+        "y": 186
+    },
+    "centerPoint": {
+        "x": 417,
+        "y": 40
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "RCS_ALL",
+    "thresh":{
+    "block":31,
+    "param":2
+    },
+     "ifopen":"close",
+    "rgb": true,
+    "result": 0.0
+}

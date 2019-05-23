@@ -19,38 +19,14 @@
         "x": 154,
         "y": 72
     },
-    "startPointUp": {
-        "x": 0,
-        "y": 0
-    },
-    "endPointUp": {
-        "x": 0,
-        "y": 0
-    },
-    "centerPointUp": {
-        "x": 0,
-        "y": 0
-    },
     "startValue": 0.0,
     "totalValue": 0.0,
     "digitType": "False",
     "result": 0.0,
-    "rectangle": {
-    "width": 61,
-     "height": 30
-  },
-  "widthSplit": [
-    [1,17,34,46,60]
-  ],
-  "heightSplit": [
-    [1,29]
-  ],
-  "decimal":[
-    2
-  ],
-  "thresh":{
-    "block":31,
-    "param":2
-  },
-  "ifopen":"close"
+    "thresh":{
+          "block":31,
+          "param":2
+    },
+    "ifopen":"close",
+    "rgb": "True"
 }

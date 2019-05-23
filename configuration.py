@@ -10,5 +10,9 @@ ifShow = False
 # configPath = "info/20190416/config"
 # templatePath = "info/20190416/template"
 
-configPath = "info/20190514/config"
-templatePath = "info/20190514/template"
+# configPath = "info/20190514/config"
+# templatePath = "info/20190514/template"
+
+configPath = "info/20190515/config"
+templatePath = "info/20190515/template"
+

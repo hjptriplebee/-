@@ -25,41 +25,41 @@ def fillAndResize(image):
 
 
 class newNet(object):
-    def __init__(self):
+    def __init__(self, if_rgb=False):
         """
         初始化LeNet模型
         :return:
         """
         sys.path.append("newNet")
         from Algorithm.OCR.digits.LeNet import myNet, rgbNet
+        self.rgb = if_rgb
+        if not if_rgb:
+            self.net = myNet()
+            self.net.eval()
+            self.net.load_state_dict(torch.load("Algorithm/OCR/digits/model/net.pkl"))
+        else:
+            self.net = rgbNet('rgb')
+            self.net.eval()
+            self.net.load_state_dict(torch.load("Algorithm/OCR/digits/model/rgb_myNet_net.pkl"))
 
-        self.bitNet = myNet()
-        self.bitNet.eval()
-        self.bitNet.load_state_dict(torch.load("Algorithm/OCR/digits/model/net.pkl"))
-        self.rgbNet = rgbNet('rgb')
-        self.rgbNet.eval()
-        self.rgbNet.load_state_dict(torch.load("Algorithm/OCR/digits/model/rgb_myNet_net.pkl"))
-
-        
-
-    def recognizeNet(self, image, type):
+    def recognizeNet(self, image):
         """
         LeNet识别图像中的数字
         :param image: 输入图像
         :return: 识别的数字值
         """
-        if type == 'bit':
+        if not self.rgb:
             image = fillAndResize(image)
             tensor = torch.Tensor(image).view((1, 1, 28, 28))/255
             tensor = tensor.to("cpu")
-            result = self.bitNet.forward(tensor)
-        if type == 'rgb':
+            result = self.net.forward(tensor)
+        else:
             img = cv2.resize(image, (28, 28), interpolation=cv2.INTER_CUBIC)
             if len(img.shape) == 2:
                 img = np.array(img, img, img)
             tensor = torch.Tensor(img).view((1, 3, 28, 28))
             tensor = tensor.to("cpu")
-            result = self.rgbNet.forward(tensor)
+            result = self.net.forward(tensor)
 
         _, predicted = torch.max(result.data, 1)
         num = int(np.array(predicted[0]).astype(np.uint32))

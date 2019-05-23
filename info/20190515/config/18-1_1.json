@@ -1,0 +1,43 @@
+{
+    "name": "18-1",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 50,
+        "y": 50,
+        "w": 1800,
+        "h": 900
+    },
+    "startPoint": {
+        "x": 46,
+        "y": 56
+    },
+    "endPoint": {
+        "x": 201,
+        "y": 169
+    },
+    "centerPoint": {
+        "x": 198,
+        "y": 52
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "RPC_V",
+    "thresh":{
+        "block":31,
+        "param":2
+    },
+    "ifopen":"close",
+    "result": 0.0
+}

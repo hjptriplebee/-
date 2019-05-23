@@ -30,7 +30,6 @@ def digitPressure(image, info):
         except IOError:
             continue
 
-    myRes = []
     if 'rgb' in info and info['rgb']:  # rgb as input
         myRes = rgbRecognize(template, info)
     else:
@@ -39,7 +38,7 @@ def digitPressure(image, info):
     if info["digitType"] == "KWH":
         myRes[0] = myRes[0][:4] + myRes.pop(1)
 
-        # 去除头部的非数字字符，同时将非头部的字符转为数字
+    # 去除头部的非数字字符，同时将非头部的字符转为数字
     for i in range(len(myRes)):
         temp = ""
         for j, c in enumerate(myRes[i]):
@@ -47,9 +46,10 @@ def digitPressure(image, info):
                 temp += c
             elif j != 0:
                 temp += str(random.randint(0, 9))
-        myRes[i] = float(temp)
+        myRes[i] = float(temp) if temp != "" else 0.0
 
     return myRes
+
 
 def rgbRecognize(template, info):
     # 由标定点得到液晶区域
@@ -58,7 +58,7 @@ def rgbRecognize(template, info):
     widthSplit = info["widthSplit"]
     heightSplit = info["heightSplit"]
     # 网络初始化
-    MyNet = newNet()
+    MyNet = newNet(if_rgb=True)
     myRes = []
     imgNum = int((len(os.listdir("storeDigitData/")) - 1) / 3)
     for i in range(len(heightSplit)):
@@ -70,19 +70,14 @@ def rgbRecognize(template, info):
                 continue
             # 得到分割的图片区域
             img = dst[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
-            num = MyNet.recognizeNet(img, 'rgb')
+            num = MyNet.recognizeNet(img)
             myNum = myNum + num
 
             # 存储图片
             cv2.imwrite("storeDigitData/rgb/{}/{}_{}{}_p{}.bmp".format(
-                num,
-                imgNum,
-                i,
-                j,
-                num
-            ), img)
-
+                num, imgNum,  i, j,  num), img)
         myRes.append(myNum)
+
     if ifShow:
         cv2.imshow("rec", dst)
         cv2.imshow("template", template)
@@ -103,7 +98,6 @@ def bitRecognize(template, info):
     block = info["thresh"]["block"]
     param = info["thresh"]["param"]
     ifOpen = info["ifopen"]
-    # .........
 
     # 由标定点得到液晶区域
     dst = boxRectifier(template, info)
@@ -120,18 +114,18 @@ def bitRecognize(template, info):
         thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, block, param)
         if ifOpen == "close":
             p = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
-            res1 = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, p)
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, p)
 
     if os.path.exists("storeDigitData/"):
-        imgNum = int((len(os.listdir("storeDigitData/"))-1)/3)
+        imgNum = int((len(os.listdir("storeDigitData/")) - 1) / 3)
         cv2.imwrite("storeDigitData/" + str(imgNum) + "_dst.bmp", dst)
         cv2.imwrite("storeDigitData/" + str(imgNum) + "_gray.bmp", gray)
         cv2.imwrite("storeDigitData/" + str(imgNum) + "_thresh.bmp", thresh)
 
-
     # 网络初始化
-    MyNet = newNet()
+    MyNet = newNet(if_rgb=False)
     myRes = []
+    imgNum = int((len(os.listdir("storeDigitData/")) - 1) / 3)
 
     for i in range(len(heightSplit)):
         split = widthSplit[i]
@@ -144,25 +138,20 @@ def bitRecognize(template, info):
             img = thresh[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
             rgb_ = dst[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
 
-            num = MyNet.recognizeNet(img, 'bit')
+            num = MyNet.recognizeNet(img)
             myNum = myNum + num
 
             # 存储图片
             cv2.imwrite("storeDigitData/thresh/{}/{}_{}{}_p{}.bmp".format(
-                num,
-                imgNum,
-                i,
-                j,
-                num
-            ), img)
-
+                num, imgNum, i, j, num), img)
+            cv2.imwrite("storeDigitData/rgb/{}/{}_{}{}_p{}.bmp".format(
+                num, imgNum, i, j, num), rgb_)
         myRes.append(myNum)
-        if ifShow:
-            cv2.imshow("rec", dst)
-            cv2.imshow("template", template)
-            print(myRes)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-        return myRes
 
-
+    if ifShow:
+        cv2.imshow("rec", dst)
+        cv2.imshow("template", template)
+        print(myRes)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    return myRes

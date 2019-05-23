@@ -1,0 +1,43 @@
+{
+    "name": "26-1",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 44,
+        "y": 66,
+        "w": 1806,
+        "h": 972
+    },
+    "startPoint": {
+        "x": 204,
+        "y": 93
+    },
+    "endPoint": {
+        "x": 437,
+        "y": 213
+    },
+    "centerPoint": {
+        "x": 431,
+        "y": 63
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "RCS_ALL",
+    "thresh":{
+        "block":31,
+        "param":2
+    },
+    "ifopen":"close",
+    "result": 0.0
+}

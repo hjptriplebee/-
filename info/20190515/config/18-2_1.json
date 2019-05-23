@@ -1,0 +1,43 @@
+{
+    "name": "18-2",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 50,
+        "y": 50,
+        "w": 1800,
+        "h": 900
+    },
+    "startPoint": {
+        "x": 41,
+        "y": 50
+    },
+    "endPoint": {
+        "x": 195,
+        "y": 163
+    },
+    "centerPoint": {
+        "x": 193,
+        "y": 48
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "KWH",
+    "thresh":{
+        "block":31,
+        "param":2
+    },
+    "ifopen":"close",
+    "result": 0.0
+}

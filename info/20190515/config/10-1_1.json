@@ -1,0 +1,44 @@
+{
+    "name": "tet",
+    "type": "digitPressure",
+    "ROI": {
+        "x": 50,
+        "y": 50,
+        "w": 1800,
+        "h": 900
+    },
+    "startPoint": {
+        "x": 172,
+        "y": 59
+    },
+    "endPoint": {
+        "x": 405,
+        "y": 191
+    },
+    "centerPoint": {
+        "x": 405,
+        "y": 43
+    },
+    "startPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "endPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "centerPointUp": {
+        "x": 0,
+        "y": 0
+    },
+    "startValue": 0,
+    "totalValue": 0,
+    "digitType": "RCS_ALL",
+    "thresh":{
+    "block":31,
+    "param":2
+    },
+     "ifopen":"close",
+    "rgb": true,
+    "result": 0.0
+}

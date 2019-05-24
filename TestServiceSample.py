@@ -33,24 +33,29 @@ def startClient(results):
 
 def codecov(imgPath):
     images = os.listdir(imgPath)
-    config = os.listdir(configPath)
 
     for im in images:
+        if im.startswith(".DS"):
+            continue
         image = cv2.imread(imgPath + "/" + im)
         print(im)
         pos = im.split(".")[0].split("-")
-        cfg = im.split(".")[0]+"_1"
+        cfg = "rcs0_1"  #  im.split(".")[0]+"_1"
         # for i in range(1, 6):
         #     cfg = pos[0] + "-" + pos[1] + "_" + str(i)
         #     if cfg + ".json" in config:
         #         receive2 = meterReader(image, [cfg])
         #         print(cfg, receive2)
+        if image.shape[0] > 600:
+            shrink = image.shape[0] / 600
+            image = cv2.resize(image, (0, 0), fx=1 / shrink, fy=1 / shrink)
+            print("image shrink: ", image.shape)
         receive2 = meterReader(image, [cfg])
         print(cfg, receive2)
     print("codecov done")
 
 
-def testVideo():
+def videoTest():
     video_path = "info/20190128/IMAGES/video_"
     for file in os.listdir(video_path):
         if file.startswith(".DS"):
@@ -83,8 +88,10 @@ if __name__ == "__main__":
 
     # codecov("info/20190410/IMAGES/Pic")
     # codecov("info/20190410/IMAGES/Pic_2")
-    codecov("info/20190515/IMAGES/image")
-    # codecov("info/20190514/image/")
+
+    # codecov("info/20190523/image/")
+    codecov("info/split/image/")
+
     #
     # codecov("info/20190416/IMAGES/image")
 

@@ -14,16 +14,15 @@ from Algorithm.pressure.digitPressure import digitPressure
 from Algorithm.pressure.normalPressure import normalPressure
 from Algorithm.pressure.colorPressure import colorPressure
 
+
+from Algorithm.onoff.contactStatus import contactStatus
 from Algorithm.onoff.onoffIndoor import onoffIndoor
 from Algorithm.onoff.onoffOutdoor import onoffOutdoor
 from Algorithm.onoff.onoffBatteryScreen import onoffBattery
 from Algorithm.onoff.readyStatus import readyStatus
 from Algorithm.onoff.springStatus import springStatus
-from Algorithm.onoff.contactStatus import contactStatus
 
-from Algorithm.others.colordetect import colordetect
-from Algorithm.others.Cabinet_indicator import indicatorimg
-from Algorithm.others.Knob_status import knobstatus
+from Algorithm.others.colorIndicator import colorIndicator
 
 from configuration import *
 
@@ -78,7 +77,7 @@ def getInfo(ID):
         info["type"] = digitPressure
     elif info["type"] == "normalPressure":
         info["type"] = normalPressure
-    elif info["type"] == "contact":
+    elif info["type"] == "contactStatus":
         info["type"] = contactStatus
     elif info["type"] == "colorPressure":
         info["type"] = colorPressure
@@ -100,19 +99,14 @@ def getInfo(ID):
         info["type"] = onoffBattery
     elif info["type"] == "videoDigit":
         info["type"] = videoDigit
-    elif info["type"] == "ready":
+    elif info["type"] == "readyStatus":
         info["type"] = readyStatus
-    elif info["type"] == "spring":
+    elif info["type"] == "springStatus":
         info["type"] = springStatus
-    elif info["type"] == "colordetect":
-        info["type"] = colordetect
-    elif info["type"] == "cabinetindicator":
-        info["type"] = indicatorimg
-    elif info["type"] == "Knob":
-        info["type"] = knobstatus
+    elif info["type"] == "colorIndicator":
+        info["type"] = colorIndicator
     else:
         info["type"] = None
-
     info["template"] = cv2.imread(templatePath + "/" + ID + ".jpg")
     if info["digitType"] != "False":
         info.update(json.load(open(os.path.join("ocr_config", info["digitType"] + ".json"))))
@@ -145,11 +139,7 @@ def meterReader(recognitionData, meterIDs):
             # cv2.waitKey(0)
             if x != 0 or y != 0 or w != 0 or h != 0:
                 ROI = recognitionData[y:y + h, x:x + w]
-            else:
-                ROI = recognitionData
-            try:
                 results.append(meterReaderCallBack(ROI, info))
-            except AttributeError:
-                print("Error in ", ID)
-                results = [0]
+            else:
+                results.append(meterReaderCallBack(recognitionData, info))
     return results

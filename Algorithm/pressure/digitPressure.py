@@ -11,6 +11,8 @@ from configuration import *
 
 
 def digitPressure(image, info):
+    # cv2.imshow("img ", image)
+    # cv2.waitKey(0)
     template = meterFinderBySIFT(image, info)
 
     # 存储图片
@@ -27,6 +29,7 @@ def digitPressure(image, info):
         try:
             os.mkdir("storeDigitData/thresh/" + str(i))
             os.mkdir("storeDigitData/rgb/" + str(i))
+            savePicture(template, info)
         except IOError:
             continue
 
@@ -60,7 +63,6 @@ def rgbRecognize(template, info):
     # 网络初始化
     MyNet = newNet(if_rgb=True)
     myRes = []
-    imgNum = int((len(os.listdir("storeDigitData/")) - 1) / 3)
     for i in range(len(heightSplit)):
         split = widthSplit[i]
         myNum = ""
@@ -73,9 +75,6 @@ def rgbRecognize(template, info):
             num = MyNet.recognizeNet(img)
             myNum = myNum + num
 
-            # 存储图片
-            cv2.imwrite("storeDigitData/rgb/{}/{}_{}{}_p{}.bmp".format(
-                num, imgNum,  i, j,  num), img)
         myRes.append(myNum)
 
     if ifShow:
@@ -116,6 +115,62 @@ def bitRecognize(template, info):
             p = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
             thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, p)
 
+    # 网络初始化
+    MyNet = newNet(if_rgb=False)
+    myRes = []
+
+    for i in range(len(heightSplit)):
+        split = widthSplit[i]
+        myNum = ""
+        for j in range(len(split) - 1):
+            if "decimal" in info.keys() and j == info["decimal"][i]:
+                myNum += "."
+                continue
+            # 得到分割的图片区域
+            img = thresh[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
+            rgb_ = dst[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
+            num = MyNet.recognizeNet(img)
+            myNum = myNum + num
+
+        myRes.append(myNum)
+
+    if ifShow:
+        cv2.imshow("rec", dst)
+        cv2.imshow("template", template)
+        print(myRes)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    return myRes
+
+def savePicture(template, info):
+    template = cv2.GaussianBlur(template, (3, 3), 0)
+
+    # 读取标定信息
+    widthSplit = info["widthSplit"]
+    heightSplit = info["heightSplit"]
+
+    # 将info中的参数加入代码中
+    block = info["thresh"]["block"]
+    param = info["thresh"]["param"]
+    ifOpen = info["ifopen"]
+
+    # 由标定点得到液晶区域
+    dst = boxRectifier(template, info)
+
+    # 灰度图
+    gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
+
+    # 针对不同的数字表类型进行不同的增强
+    if info["digitType"] != "TTC":
+        Blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        Hist = cv2.equalizeHist(Blur)
+        thresh = cv2.adaptiveThreshold(Hist, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 15, 11)
+    else:
+        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, block, param)
+        if ifOpen == "close":
+            p = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, p)
+
     if os.path.exists("storeDigitData/"):
         imgNum = int((len(os.listdir("storeDigitData/")) - 1) / 3)
         cv2.imwrite("storeDigitData/" + str(imgNum) + "_dst.bmp", dst)
@@ -124,7 +179,7 @@ def bitRecognize(template, info):
 
     # 网络初始化
     MyNet = newNet(if_rgb=False)
-    myRes = []
+
     imgNum = int((len(os.listdir("storeDigitData/")) - 1) / 3)
 
     for i in range(len(heightSplit)):
@@ -137,7 +192,6 @@ def bitRecognize(template, info):
             # 得到分割的图片区域
             img = thresh[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
             rgb_ = dst[heightSplit[i][0]:heightSplit[i][1], split[j]:split[j + 1]]
-
             num = MyNet.recognizeNet(img)
             myNum = myNum + num
 
@@ -146,12 +200,4 @@ def bitRecognize(template, info):
                 num, imgNum, i, j, num), img)
             cv2.imwrite("storeDigitData/rgb/{}/{}_{}{}_p{}.bmp".format(
                 num, imgNum, i, j, num), rgb_)
-        myRes.append(myNum)
 
-    if ifShow:
-        cv2.imshow("rec", dst)
-        cv2.imshow("template", template)
-        print(myRes)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    return myRes

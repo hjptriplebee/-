@@ -14,6 +14,7 @@ from Algorithm.pressure.digitPressure import digitPressure
 from Algorithm.pressure.normalPressure import normalPressure
 from Algorithm.pressure.colorPressure import colorPressure
 
+
 from Algorithm.onoff.onoffIndoor import onoffIndoor
 from Algorithm.onoff.onoffOutdoor import onoffOutdoor
 from Algorithm.onoff.onoffBatteryScreen import onoffBattery
@@ -24,6 +25,7 @@ from Algorithm.onoff.contactStatus import contactStatus
 from Algorithm.others.colordetect import colordetect
 from Algorithm.others.Cabinet_indicator import indicatorimg
 from Algorithm.others.Knob_status import knobstatus
+
 
 from configuration import *
 
@@ -92,8 +94,8 @@ def getInfo(ID):
         info["type"] = oilTempreture
     elif info["type"] == "blenometer":
         info["type"] = checkBleno
-    elif info["type"] == "onoffIndoor":
-        info["type"] = onoffIndoor
+    elif info["type"] == "contactStatus":
+        info["type"] = contactStatus
     elif info["type"] == "onoffOutdoor":
         info["type"] = onoffOutdoor
     elif info["type"] == "onoffBattery":
